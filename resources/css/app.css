@@ -1,0 +1,10 @@
+/* Impor Font Poppins */
+@import '@fontsource/poppins';
+
+/* Impor CSS untuk AOS */
+@import 'aos/dist/aos.css';
+
+/* Kode Tailwind bawaan */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
