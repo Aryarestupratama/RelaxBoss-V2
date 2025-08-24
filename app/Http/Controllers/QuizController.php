@@ -106,14 +106,20 @@ class QuizController extends Controller
     public function showResult(QuizAttempt $attempt)
     {
         $this->authorize('view', $attempt);
+
+        // [PERBAIKAN] Logika pemanggilan AI dihapus.
+        // Fungsi ini sekarang hanya bertugas untuk menampilkan data yang sudah ada.
+
         $quiz = $attempt->quiz;
         $results = $attempt->results;
 
+        // Cek jika hasil kalkulasi skor belum ada (sebagai pengaman)
         if (is_null($results)) {
             Log::warning("Attempt #{$attempt->id} diakses tanpa hasil kalkulasi.");
-            return redirect()->route('quizzes.index')->with('error', 'Hasil untuk kuis ini belum tersedia.');
+            return redirect()->route('quizzes.index')->with('error', 'Hasil untuk kuis ini belum tersedia atau belum selesai diproses.');
         }
 
+        // Kirim semua data yang ada (termasuk ai_summary yang mungkin null) ke view.
         return view('user.quizzes.results', compact('quiz', 'results', 'attempt'));
     }
 
