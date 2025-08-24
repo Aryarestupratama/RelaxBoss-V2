@@ -85,10 +85,10 @@
                         "{{ $attempt->ai_summary ?? 'Ringkasan belum tersedia.' }}"
                     </div>
                     <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                        <button type="button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-100 transition">
+                        <a href="{{ route('quizzes.result.pdf', $attempt) }}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-100 transition">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                             Unduh PDF
-                        </button>
+                        </a>
                         <button type="button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-100 transition">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 4.186m0-4.186c.524 1.263 1.232 2.423 2.083 3.512a2.25 2.25 0 003.414 0c.851-1.09 1.56-2.249 2.083-3.512a2.25 2.25 0 000-4.186c-.524-1.263-1.232-2.423-2.083-3.512a2.25 2.25 0 00-3.414 0c-.851 1.09-1.56 2.249-2.083 3.512z" /></svg>
                             Kirim ke Psikolog

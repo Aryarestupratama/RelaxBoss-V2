@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class QuizController extends Controller
 {
@@ -149,5 +150,20 @@ class QuizController extends Controller
         $attempt->save();
 
         return redirect()->route('quizzes.result', $attempt->id);
+    }
+
+    public function downloadResultPdf(QuizAttempt $attempt)
+    {
+        $this->authorize('view', $attempt);
+
+        // Muat data yang sama seperti di showResult
+        $quiz = $attempt->quiz;
+        $results = $attempt->results;
+
+        // Buat PDF dari view khusus
+        $pdf = PDF::loadView('user.quizzes.results_pdf', compact('quiz', 'results', 'attempt'));
+        
+        // Beri nama file dan unduh
+        return $pdf->download('hasil-asesmen-'.$quiz->slug.'-'.$attempt->id.'.pdf');
     }
 }

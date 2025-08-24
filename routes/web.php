@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/result/{attempt}', [QuizController::class, 'showResult'])->name('result');
         Route::get('/context/{attempt}', [QuizController::class, 'showContextForm'])->name('context');
         Route::post('/context/{attempt}', [QuizController::class, 'submitContext'])->name('context.submit');
+        Route::get('/result/{attempt}/download', [QuizController::class, 'downloadResultPdf'])->name('result.pdf');
     });
 
 });
