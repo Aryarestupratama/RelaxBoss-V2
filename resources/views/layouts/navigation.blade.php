@@ -18,7 +18,7 @@ if (Auth::user()->role === \App\Enums\UserRole::ADMIN) {
     // Link default untuk pengguna biasa
     $navLinks = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
-        // ['label' => 'Asesmen', 'route' => '#', 'active' => false], // Placeholder
+        ['label' => 'Asesmen', 'route' => 'quizzes.index', 'active' => request()->routeIs('quizzes.*')], 
         // ['label' => 'Komunitas', 'route' => '#', 'active' => false], // Placeholder
     ];
 }
