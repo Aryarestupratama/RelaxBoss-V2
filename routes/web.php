@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelaxMateController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ProgramController;
 
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\QuizManagementController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\LikertOptionController; 
 use App\Http\Controllers\Admin\ScoringRuleController;
 use App\Http\Controllers\Admin\QuizAttemptController;
+use App\Http\Controllers\Admin\ProgramController As AdminProgramController;
+use App\Http\Controllers\Admin\ProgramMaterialController; 
 use Illuminate\Support\Facades\Route;
 
 // Halaman utama
@@ -53,6 +56,17 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::delete('/rules/{rule}', [ScoringRuleController::class, 'destroy'])->name('rules.destroy');
 
     Route::get('attempts/{attempt}', [QuizAttemptController::class, 'show'])->name('attempts.show');
+
+    Route::resource('programs', AdminProgramController::class);
+
+    Route::prefix('programs/{program}/materials')->name('programs.materials.')->group(function () {
+        Route::get('/', [ProgramMaterialController::class, 'index'])->name('index');
+        Route::post('/', [ProgramMaterialController::class, 'store'])->name('store');
+    });
+    
+    // Route untuk update dan delete materi
+    Route::put('/materials/{material}', [ProgramMaterialController::class, 'update'])->name('materials.update');
+    Route::delete('/materials/{material}', [ProgramMaterialController::class, 'destroy'])->name('materials.destroy');
 });
 
 // Grup untuk Psikolog
@@ -81,6 +95,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/context/{attempt}', [QuizController::class, 'showContextForm'])->name('context');
         Route::post('/context/{attempt}', [QuizController::class, 'submitContext'])->name('context.submit');
         Route::get('/result/{attempt}/download', [QuizController::class, 'downloadResultPdf'])->name('result.pdf');
+    });
+
+    Route::prefix('programs')->name('programs.')->group(function () {
+        // Halaman daftar semua program
+        Route::get('/', [ProgramController::class, 'index'])->name('index');
+        
+        // Halaman detail satu program (setelah mendaftar)
+        Route::get('/{program:slug}', [ProgramController::class, 'show'])->name('show');
+        
+        // Endpoint untuk mendaftar ke program
+        Route::post('/{program}/enroll', [ProgramController::class, 'enroll'])->name('enroll');
     });
 
 });

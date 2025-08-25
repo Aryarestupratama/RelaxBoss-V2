@@ -49,4 +49,9 @@ class User extends Authenticatable
             'role' => UserRole::class,
         ];
     }
+
+    public function enrolledPrograms()
+    {
+        return $this->belongsToMany(Program::class, 'program_enrollments');
+    }
 }

@@ -63,24 +63,16 @@ class QuizController extends Controller
     {
         $answers = $request->input('answers', []);
 
-        // [PERBAIKAN KUNCI] Filter data jawaban untuk memastikan validitasnya.
-        // Ini akan menghapus entri yang rusak seperti [0 => null].
         $filteredAnswers = array_filter($answers, function($value, $key) {
-            $isValid = is_numeric($key) && $key > 0 && !is_null($value);
-            if (!$isValid) {
-                Log::warning('Data jawaban tidak valid terdeteksi dan difilter.', ['key' => $key, 'value' => $value]);
-            }
-            return $isValid;
+            return is_numeric($key) && $key > 0 && !is_null($value);
         }, ARRAY_FILTER_USE_BOTH);
 
-        // Validasi menggunakan data yang sudah difilter
         if (count($filteredAnswers) < $quiz->questions->count()) {
             return back()->withInput()->with('error', 'Harap jawab semua pertanyaan sebelum melanjutkan.');
         }
 
         $attempt = QuizAttempt::create(['quiz_id' => $quiz->id, 'user_id' => Auth::id()]);
         
-        // Gunakan data yang sudah bersih untuk menyimpan
         foreach ($filteredAnswers as $questionId => $value) {
             $attempt->answers()->create([
                 'question_id' => $questionId,
@@ -94,7 +86,12 @@ class QuizController extends Controller
 
         $isSevere = false;
         foreach($results as $result) {
-            if (stripos($result['interpretation'], 'Sedang') !== false || stripos($result['interpretation'], 'Berat') !== false || stripos($result['interpretation'], 'Tinggi') !== false) {
+            // [PERBAIKAN KUNCI] Tambahkan pengecekan untuk "Parah" dan "Sangat Parah"
+            $interpretation = strtolower($result['interpretation']);
+            if (str_contains($interpretation, 'sedang') || 
+                str_contains($interpretation, 'berat') || 
+                str_contains($interpretation, 'tinggi') ||
+                str_contains($interpretation, 'parah')) {
                 $isSevere = true;
                 break;
             }

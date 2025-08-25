@@ -6,20 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('programs', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->string('cover_image')->nullable();
+            $table->integer('duration_days'); // Durasi program dalam hari
+            
+            // Menentukan siapa pembimbingnya (Psikolog)
+            $table->foreignId('mentor_id')->constrained('users');
+            
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('programs');

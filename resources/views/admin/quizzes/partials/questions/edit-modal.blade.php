@@ -1,9 +1,9 @@
-<div x-show="showEditModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+<div x-show="showEditQuestionModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
     <div class="flex items-center justify-center min-h-screen px-4">
-        <div x-show="showEditModal" x-transition class="fixed inset-0" @click="showEditModal = false">
+        <div x-show="showEditQuestionModal" x-transition class="fixed inset-0" @click="showEditQuestionModal = false">
             <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-        <div x-show="showEditModal" x-transition class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+        <div x-show="showEditQuestionModal" x-transition class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
             <form :action="`/admin/questions/${editQuestion.id}`" method="POST">
                 @csrf
                 @method('PUT')
@@ -27,7 +27,7 @@
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">Update</button>
-                    <button type="button" @click="showEditModal = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">Batal</button>
+                    <button type="button" @click="showEditQuestionModal = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">Batal</button>
                 </div>
             </form>
         </div>

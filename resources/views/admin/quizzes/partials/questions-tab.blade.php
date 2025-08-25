@@ -1,7 +1,7 @@
 <div class="bg-white rounded-lg shadow-md">
     <div class="p-6 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800">Daftar Pertanyaan</h2>
-        <button @click="showCreateModal = true" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700">Tambah Pertanyaan</button>
+        <button @click="showCreateQuestionModal = true" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700">Tambah Pertanyaan</button>
     </div>
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
@@ -20,8 +20,8 @@
                         <td class="px-6 py-4">{{ $question->sub_scale }}</td>
                         <td class="px-6 py-4">{{ $question->is_reversed ? 'Ya' : 'Tidak' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button @click="openEditModal({{ $question }})" class="text-indigo-600 hover:text-indigo-900">Edit</button>
-                            <button @click="openDeleteModal({{ $question }})" class="text-red-600 hover:text-red-900 ml-4">Hapus</button>
+                            <button @click="openEditQuestionModal({{ $question }})" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                            <button @click="openDeleteQuestionModal({{ $question }})" class="text-red-600 hover:text-red-900 ml-4">Hapus</button>
                         </td>
                     </tr>
                 @empty

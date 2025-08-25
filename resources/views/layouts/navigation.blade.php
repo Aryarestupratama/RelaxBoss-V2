@@ -19,7 +19,7 @@ if (Auth::user()->role === \App\Enums\UserRole::ADMIN) {
     $navLinks = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
         ['label' => 'Asesmen', 'route' => 'quizzes.index', 'active' => request()->routeIs('quizzes.*')], 
-        // ['label' => 'Komunitas', 'route' => '#', 'active' => false], // Placeholder
+        ['label' => 'Komunitas', 'route' => 'programs.index', 'active' => request()->routeIs('programs.*')],
     ];
 }
 @endphp

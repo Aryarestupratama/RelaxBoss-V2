@@ -35,16 +35,22 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
-            'text' => 'required|string',
+            'text' => 'required|string|max:255',
             'sub_scale' => 'required|string|max:255',
-            'is_reversed' => 'sometimes|boolean',
+            // Validasi untuk is_reversed tidak lagi diperlukan di sini
         ]);
 
-        $question->update([
-            'text' => $validated['text'],
-            'sub_scale' => $validated['sub_scale'],
-            'is_reversed' => $request->has('is_reversed') ? true : false,
-        ]);
+        // 1. Update field teks biasa
+        $question->text = $validated['text'];
+        $question->sub_scale = $validated['sub_scale'];
+
+        // 2. [PERBAIKAN] Update field boolean dengan cara yang paling andal.
+        // $request->has('is_reversed') akan mengembalikan `true` jika checkbox dicentang
+        // dan `false` jika tidak dicentang (karena browser tidak mengirimkannya).
+        $question->is_reversed = $request->has('is_reversed');
+
+        // 3. Simpan semua perubahan
+        $question->save();
 
         return back()->with('success', 'Pertanyaan berhasil diperbarui.');
     }
