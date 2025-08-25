@@ -1,4 +1,3 @@
-{{-- Menggunakan layout komponen standar Breeze untuk konsistensi --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -55,18 +54,14 @@
                                         <span>{{ $quiz->questions_count }} Pertanyaan</span>
                                     </div>
 
-                                    {{-- [PERBAIKAN KRITIS] Mengganti nama route agar sesuai dengan routes/web.php --}}
                                     @if ($quiz->attempted_today)
-                                        <div class="space-y-3">
-                                            <a href="{{ route('quizzes.result', $quiz->latest_attempt_id_today) }}" class="block w-full text-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
-                                                Lihat Hasil
-                                            </a>
-                                            <a href="{{ route('quizzes.show', $quiz) }}" class="block w-full text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
-                                                Ulangi Asesmen
-                                            </a>
-                                        </div>
+                                        {{-- [PERBAIKAN] Tombol "Ulangi Asesmen" dihilangkan --}}
+                                        <a href="{{ route('quizzes.result', $quiz->latest_attempt_id_today) }}" class="block w-full text-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
+                                            Lihat Hasil
+                                        </a>
                                     @else
-                                        <a href="{{ route('quizzes.show', $quiz) }}" class="block w-full text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                                        {{-- [PERBAIKAN] Tombol ini sekarang mengarah ke halaman perkenalan --}}
+                                        <a href="{{ route('quizzes.introduction', $quiz) }}" class="block w-full text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
                                             Mulai Asesmen
                                         </a>
                                     @endif
@@ -74,7 +69,6 @@
                             </div>
                         </div>
                     @empty
-                        {{-- [IMPROVISASI] Tampilan "empty state" yang lebih menarik --}}
                         <div class="md:col-span-2 lg:col-span-3 text-center py-16 px-6 bg-white rounded-lg shadow-md">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />

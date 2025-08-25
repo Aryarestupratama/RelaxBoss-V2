@@ -36,6 +36,17 @@ class QuizController extends Controller
         return view('user.quizzes.index', compact('quizzes'));
     }
 
+    public function showIntroduction(Quiz $quiz)
+    {
+        // Eager load relasi yang dibutuhkan
+        $quiz->load('questions', 'likertOptions');
+
+        // Ambil daftar sub-skala yang unik dari pertanyaan
+        $subScales = $quiz->questions->pluck('sub_scale')->unique()->values();
+
+        return view('user.quizzes.introduction', compact('quiz', 'subScales'));
+    }
+
     public function show(Quiz $quiz)
     {
         $quiz->load('questions', 'likertOptions');
