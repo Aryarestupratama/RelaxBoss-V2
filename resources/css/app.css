@@ -1,5 +1,7 @@
 /* Impor Font Poppins */
 @import '@fontsource/poppins';
+@import 'trix/dist/trix.css';
+
 
 /* Impor CSS untuk AOS */
 @import 'aos/dist/aos.css';

@@ -4,26 +4,26 @@
             <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
         <div x-show="showCreateModal" x-transition class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full">
-            <form action="{{ route('admin.programs.materials.store', $program) }}" method="POST">
+            <form action="{{ route('psikolog.programs.materials.store', $program) }}" method="POST">
                 @csrf
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <h3 class="text-lg font-medium text-gray-900">Tambah Materi Baru</h3>
                     <div class="mt-4 space-y-4">
                         <div>
-                            <label for="create_m_day_number" class="block text-sm font-medium text-gray-700">Hari Ke-</label>
-                            <input type="number" name="day_number" id="create_m_day_number" value="{{ old('day_number') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="create_m_day_number_psikolog" class="block text-sm font-medium text-gray-700">Hari Ke-</label>
+                            <input type="number" name="day_number" id="create_m_day_number_psikolog" value="{{ old('day_number') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @error('day_number')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
                         </div>
                         <div>
-                            <label for="create_m_title" class="block text-sm font-medium text-gray-700">Judul Materi</label>
-                            <input type="text" name="title" id="create_m_title" value="{{ old('title') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="create_m_title_psikolog" class="block text-sm font-medium text-gray-700">Judul Materi</label>
+                            <input type="text" name="title" id="create_m_title_psikolog" value="{{ old('title') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @error('title')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
                         </div>
                         <div>
-                            <label for="create_m_content_input" class="block text-sm font-medium text-gray-700">Konten Materi</label>
-                            {{-- [PERUBAHAN] Mengganti textarea dengan Trix Editor --}}
-                            <input id="create_m_content_input" type="hidden" name="content" value="{{ old('content') }}">
-                            <trix-editor input="create_m_content_input" class="mt-1 trix-content"></trix-editor>
+                            <label for="create_m_content_input_psikolog" class="block text-sm font-medium text-gray-700">Konten Materi</label>
+                            {{-- [IMPLEMENTASI TRIX] --}}
+                            <input id="create_m_content_input_psikolog" type="hidden" name="content" value="{{ old('content') }}">
+                            <trix-editor input="create_m_content_input_psikolog" class="mt-1 trix-content"></trix-editor>
                             @error('content')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
                         </div>
                     </div>

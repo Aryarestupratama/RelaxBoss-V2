@@ -37,7 +37,7 @@
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 mb-3">{{ $material->title }}</h2>
                         <div class="prose prose-blue max-w-none text-gray-700 leading-relaxed">
-                            {!! $material->content !!} {{-- Menggunakan {!! !!} untuk merender HTML dari konten --}}
+                            {!! $material->content !!}
                         </div>
                     </div>
                 @empty

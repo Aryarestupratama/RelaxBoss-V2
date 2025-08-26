@@ -4,7 +4,7 @@
             <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
         <div x-show="showEditModal" x-transition class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full">
-            <form :action="`/admin/materials/${editMaterial.id}`" method="POST">
+            <form :action="`/psikolog/materials/${editMaterial.id}`" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -12,18 +12,18 @@
                     <div class="mt-4 space-y-4">
                         <input type="hidden" name="edit_material_id" :value="editMaterial.id">
                         <div>
-                            <label for="edit_m_day_number" class="block text-sm font-medium text-gray-700">Hari Ke-</label>
-                            <input type="number" name="day_number" id="edit_m_day_number" x-model="editMaterial.day_number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="edit_m_day_number_psikolog" class="block text-sm font-medium text-gray-700">Hari Ke-</label>
+                            <input type="number" name="day_number" id="edit_m_day_number_psikolog" x-model="editMaterial.day_number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
-                            <label for="edit_m_title" class="block text-sm font-medium text-gray-700">Judul Materi</label>
-                            <input type="text" name="title" id="edit_m_title" x-model="editMaterial.title" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="edit_m_title_psikolog" class="block text-sm font-medium text-gray-700">Judul Materi</label>
+                            <input type="text" name="title" id="edit_m_title_psikolog" x-model="editMaterial.title" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
-                            <label for="edit_m_content_input" class="block text-sm font-medium text-gray-700">Konten Materi</label>
-                            {{-- [PERUBAHAN] Mengganti textarea dengan Trix Editor --}}
-                            <input id="edit_m_content_input" type="hidden" name="content" :value="editMaterial.content">
-                            <trix-editor input="edit_m_content_input" class="mt-1 trix-content"></trix-editor>
+                            <label for="edit_m_content_input_psikolog" class="block text-sm font-medium text-gray-700">Konten Materi</label>
+                            {{-- [IMPLEMENTASI TRIX] --}}
+                            <input id="edit_m_content_input_psikolog" type="hidden" name="content" :value="editMaterial.content">
+                            <trix-editor input="edit_m_content_input_psikolog" class="mt-1 trix-content"></trix-editor>
                         </div>
                     </div>
                 </div>

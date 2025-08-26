@@ -8,6 +8,7 @@
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/typography": "^0.5.16",
         "@tailwindcss/vite": "^4.0.0",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
@@ -21,6 +22,7 @@
     "dependencies": {
         "@fontsource/poppins": "^5.2.6",
         "aos": "^2.3.4",
+        "trix": "^2.1.15",
         "typed.js": "^2.1.0"
     }
 }

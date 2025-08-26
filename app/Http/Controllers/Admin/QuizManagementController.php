@@ -66,10 +66,13 @@ class QuizManagementController extends Controller
      */
     public function show(Quiz $quiz)
     {
-        // [PERBAIKAN] Eager load relasi 'attempts' beserta user yang mengerjakannya.
+        // Eager load relasi yang dibutuhkan
         $quiz->load('questions', 'likertOptions', 'scoringRules', 'attempts.user');
 
-        return view('admin.quizzes.manage', compact('quiz'));
+        // [BARU] Ambil daftar sub-skala yang unik dari pertanyaan-pertanyaan kuis ini
+        $subScales = $quiz->questions->pluck('sub_scale')->unique()->values();
+
+        return view('admin.quizzes.manage', compact('quiz', 'subScales'));
     }
 
     /**

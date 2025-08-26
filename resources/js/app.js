@@ -3,7 +3,7 @@ import "./bootstrap";
 import Alpine from "alpinejs";
 
 // --- MULAI PENAMBAHAN KODE ---
-
+import "trix";
 // Impor AOS dan Typed.js
 import AOS from "aos";
 import Typed from "typed.js";

@@ -12,7 +12,13 @@
                     <div class="mt-4 space-y-4">
                         <div>
                             <label for="edit_r_sub_scale" class="block text-sm font-medium text-gray-700">Sub-Skala</label>
-                            <input type="text" name="sub_scale" id="edit_r_sub_scale" x-model="editRule.sub_scale" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            {{-- [PERBAIKAN] Mengganti input teks menjadi dropdown --}}
+                            <select name="sub_scale" id="edit_r_sub_scale" x-model="editRule.sub_scale" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="">-- Pilih Sub-Skala --</option>
+                                @foreach($subScales as $scale)
+                                    <option value="{{ $scale }}">{{ $scale }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>

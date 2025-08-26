@@ -13,6 +13,10 @@ use App\Http\Controllers\Admin\ScoringRuleController;
 use App\Http\Controllers\Admin\QuizAttemptController;
 use App\Http\Controllers\Admin\ProgramController As AdminProgramController;
 use App\Http\Controllers\Admin\ProgramMaterialController; 
+
+use App\Http\Controllers\Psikolog\DashboardController as PsychologistDashboardController;
+use App\Http\Controllers\Psikolog\ProgramController as PsychologistProgramController;
+use App\Http\Controllers\Psikolog\ProgramMaterialController as PsychologistMaterialController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman utama
@@ -71,9 +75,18 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
 // Grup untuk Psikolog
 Route::middleware(['auth', 'verified', 'role:psikolog'])->prefix('psikolog')->name('psikolog.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('psikolog.dashboard'); // Nanti kita buat view-nya
-    })->name('dashboard');
+   Route::get('/dashboard', [PsychologistDashboardController::class, 'index'])->name('dashboard');
+    
+    // Route untuk halaman "Program Saya"
+    Route::get('/programs', [PsychologistProgramController::class, 'index'])->name('programs.index');
+
+    // [BARU] Route untuk manajemen materi
+    Route::prefix('programs/{program}/materials')->name('programs.materials.')->group(function () {
+        Route::get('/', [PsychologistMaterialController::class, 'index'])->name('index');
+        Route::post('/', [PsychologistMaterialController::class, 'store'])->name('store');
+    });
+    Route::put('/materials/{material}', [PsychologistMaterialController::class, 'update'])->name('materials.update');
+    Route::delete('/materials/{material}', [PsychologistMaterialController::class, 'destroy'])->name('materials.destroy');
 });
 
 Route::middleware('auth')->group(function () {
