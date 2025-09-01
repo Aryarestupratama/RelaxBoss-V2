@@ -54,4 +54,65 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Program::class, 'program_enrollments');
     }
+
+    /**
+     * Profil profesional untuk user ini (jika dia psikolog).
+     */
+    public function psychologistProfile()
+    {
+        return $this->hasOne(PsychologistProfile::class);
+    }
+
+    /**
+     * Dokumen-dokumen yang dimiliki oleh user ini (jika psikolog).
+     */
+    public function documents()
+    {
+        return $this->hasMany(PsychologistDocument::class);
+    }
+
+    /**
+     * Layanan yang ditawarkan oleh user ini (jika psikolog).
+     */
+    public function services()
+    {
+        return $this->hasMany(PsychologistService::class);
+    }
+
+    /**
+     * Jadwal yang dimiliki oleh user ini (jika psikolog).
+     */
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    /**
+     * Spesialisasi yang dimiliki oleh user ini (jika psikolog).
+     */
+    public function specializations()
+    {
+        return $this->belongsToMany(Specialization::class, 'psychologist_specialization');
+    }
+
+    /**
+     * Sesi konsultasi di mana user ini adalah pasien.
+     */
+    public function consultationSessionsAsPatient()
+    {
+        return $this->hasMany(ConsultationSession::class, 'user_id');
+    }
+
+    /**
+     * Sesi konsultasi di mana user ini adalah psikolog.
+     */
+    public function consultationSessionsAsPsychologist()
+    {
+        return $this->hasMany(ConsultationSession::class, 'psychologist_id');
+    }
+
+    public function consultationSessions()
+    {
+        return $this->hasMany(ConsultationSession::class, 'user_id');
+    }
 }

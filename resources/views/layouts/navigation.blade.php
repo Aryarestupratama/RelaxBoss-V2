@@ -1,36 +1,28 @@
 @php
-// Logika ini tetap sama, menentukan link navigasi berdasarkan peran pengguna.
+// Logika ini menentukan link navigasi untuk pengguna biasa.
+// Role Admin & Psikolog menggunakan sidebar, bukan navbar ini.
 $navLinks = [];
 
-if (Auth::user()->role === \App\Enums\UserRole::ADMIN) {
-    $navLinks = [
-        ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'active' => request()->routeIs('admin.dashboard')],
-        // Tambahkan link admin lainnya di sini
-        // Contoh: ['label' => 'Manajemen User', 'route' => 'admin.users.index', 'active' => request()->routeIs('admin.users.*')],
-    ];
-} elseif (Auth::user()->role === \App\Enums\UserRole::PSIKOLOG) {
-    $navLinks = [
-        ['label' => 'Dashboard', 'route' => 'psikolog.dashboard', 'active' => request()->routeIs('psikolog.dashboard')],
-        // Tambahkan link psikolog lainnya di sini
-        // Contoh: ['label' => 'Jadwal Konsultasi', 'route' => 'psikolog.schedule.index', 'active' => request()->routeIs('psikolog.schedule.*')],
-    ];
-} else {
+if (Auth::check()) {
     // Link default untuk pengguna biasa
     $navLinks = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
-        ['label' => 'Asesmen', 'route' => 'quizzes.index', 'active' => request()->routeIs('quizzes.*')], 
+        ['label' => 'AI RelaxMate', 'route' => 'relaxmate.index', 'active' => request()->routeIs('relaxmate.*')],
+        ['label' => 'Asesmen', 'route' => 'quizzes.index', 'active' => request()->routeIs('quizzes.*')],
+        // ['label' => 'TodoList Pomodoro', 'route' => 'todos.index', 'active' => request()->routeIs('todos.*')],
         ['label' => 'Komunitas', 'route' => 'programs.index', 'active' => request()->routeIs('programs.*')],
+        ['label' => 'Konsultasi', 'route' => 'psychologists.index', 'active' => request()->routeIs('psychologists.*')],
     ];
 }
 @endphp
 
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100 shadow-sm">
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100 shadow-sm fixed top-0 left-0 w-full z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             <!-- Kiri: Logo -->
             <div class="flex-1 flex justify-start">
-                <a href="{{ route('dashboard') }}" class="shrink-0 flex items-center">
+                <a href="{{ Auth::check() ? route('dashboard') : route('welcome') }}" class="shrink-0 flex items-center">
                     <span class="font-bold text-2xl text-[#007BFF]">RelaxBoss</span>
                 </a>
             </div>
@@ -48,35 +40,35 @@ if (Auth::user()->role === \App\Enums\UserRole::ADMIN) {
             <div class="flex-1 flex justify-end items-center">
                 <!-- Settings Dropdown -->
                 <div class="hidden sm:flex sm:items-center">
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button class="flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                                <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://placehold.co/40x40/007BFF/FFFFFF?text=' . strtoupper(substr(Auth::user()->name, 0, 1)) }}" alt="{{ Auth::user()->name }}">
-                                <div class="hidden md:block">{{ Auth::user()->name }}</div>
-                                <div class="ms-1">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </button>
-                        </x-slot>
+                    @auth
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
+                                    <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://placehold.co/40x40/007BFF/FFFFFF?text=' . strtoupper(substr(Auth::user()->name, 0, 1)) }}" alt="{{ Auth::user()->name }}">
+                                    <div class="hidden md:block">{{ Auth::user()->name }}</div>
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
 
-                        <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profil Saya') }}
-                            </x-dropdown-link>
-
-                            <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
-                                    {{ __('Keluar') }}
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    {{ __('Profil Saya') }}
                                 </x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-dropdown-link :href="route('logout')"
+                                            onclick="event.preventDefault();
+                                                        this.closest('form').submit();">
+                                        {{ __('Keluar') }}
+                                    </x-dropdown-link>
+                                </form>
+                            </x-slot>
+                        </x-dropdown>
+                    @endauth
                 </div>
 
                 <!-- Hamburger -->
@@ -94,34 +86,34 @@ if (Auth::user()->role === \App\Enums\UserRole::ADMIN) {
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            @foreach ($navLinks as $link)
-                <x-responsive-nav-link :href="route($link['route'])" :active="$link['active']">
-                    {{ $link['label'] }}
-                </x-responsive-nav-link>
-            @endforeach
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profil Saya') }}
-                </x-responsive-nav-link>
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Keluar') }}
+        @auth
+            <div class="pt-2 pb-3 space-y-1">
+                @foreach ($navLinks as $link)
+                    <x-responsive-nav-link :href="route($link['route'])" :active="$link['active']">
+                        {{ $link['label'] }}
                     </x-responsive-nav-link>
-                </form>
+                @endforeach
             </div>
-        </div>
+
+            <div class="pt-4 pb-1 border-t border-gray-200">
+                <div class="px-4">
+                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                </div>
+                <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('profile.edit')">
+                        {{ __('Profil Saya') }}
+                    </x-responsive-nav-link>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <x-responsive-nav-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Keluar') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
+            </div>
+        @endauth
     </div>
 </nav>

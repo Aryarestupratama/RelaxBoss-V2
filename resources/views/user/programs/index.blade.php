@@ -1,15 +1,17 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Komunitas & Program Terbimbing') }}
-        </h2>
+    {{-- Mengatur judul tab browser --}}
+    <x-slot name="title">
+        Komunitas & Program
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Header Halaman -->
+            <!-- [IMPROVISASI] Header Halaman yang lebih visual -->
             <div class="text-center mb-12" data-aos="fade-down">
+                <div class="w-20 h-20 mx-auto bg-blue-100 text-blue-600 flex items-center justify-center rounded-full mb-6">
+                    <i class="fa-solid fa-users-line text-4xl"></i>
+                </div>
                 <h1 class="text-4xl font-extrabold text-gray-800 tracking-tight sm:text-5xl">
                     Tumbuh Bersama Komunitas
                 </h1>
@@ -17,49 +19,65 @@
                     Temukan dukungan dan bimbingan dalam program terstruktur yang dirancang untuk membantu Anda mencapai tujuan kesejahteraan.
                 </p>
             </div>
-
-            <!-- Notifikasi Sukses/Error -->
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-md" role="alert">
-                    <p>{{ session('success') }}</p>
+            
+            <!-- [IMPROVISASI] Filter Interaktif dengan AlpineJS -->
+            <div x-data="{ activeTab: 'all' }" class="mb-10">
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex justify-center space-x-6" aria-label="Tabs">
+                        <button @click="activeTab = 'all'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'all', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'all' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                            Semua Program
+                        </button>
+                        <button @click="activeTab = 'enrolled'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'enrolled', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'enrolled' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                            Program Saya
+                        </button>
+                         <button @click="activeTab = 'available'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'available', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'available' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                            Program Tersedia
+                        </button>
+                    </nav>
                 </div>
-            @endif
-            @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
-                    <p>{{ session('error') }}</p>
-                </div>
-            @endif
+            </div>
 
             <!-- Grid untuk Kartu Program -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse ($programs as $program)
-                    <div class="bg-white shadow-lg rounded-2xl overflow-hidden h-full flex flex-col transition-transform duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                        <!-- Gambar Cover -->
-                        <img class="h-48 w-full object-cover" src="{{ $program->cover_image ? asset('storage/' . $program->cover_image) : 'https://placehold.co/600x400/E0F2FE/334155?text=Program' }}" alt="Cover Program {{ $program->name }}">
+                    @php
+                        $isEnrolled = in_array($program->id, $enrolledProgramIds);
+                    @endphp
+                    <div x-show="(activeTab === 'all') || (activeTab === 'enrolled' && {{ $isEnrolled ? 'true' : 'false' }}) || (activeTab === 'available' && !{{ $isEnrolled ? 'true' : 'false' }})" 
+                         x-transition:enter="transition ease-out duration-300" 
+                         x-transition:enter-start="opacity-0 transform scale-95" 
+                         x-transition:enter-end="opacity-100 transform scale-100"
+                         class="relative bg-white shadow-xl border border-slate-200/50 rounded-2xl overflow-hidden h-full flex flex-col transition-transform duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
+                        
+                        {{-- [IMPROVISASI] Badge jika sudah terdaftar --}}
+                        @if($isEnrolled)
+                            <span class="absolute top-4 right-4 text-xs font-semibold inline-block py-1 px-3 uppercase rounded-full text-green-600 bg-green-200 z-10">
+                                Terdaftar
+                            </span>
+                        @endif
 
+                       
                         <div class="p-6 flex flex-col flex-grow">
                             <h2 class="text-xl font-bold text-gray-900 mb-2">{{ $program->name }}</h2>
                             <p class="text-gray-600 mb-4 text-sm leading-relaxed flex-grow">{{ Str::limit($program->description, 120) }}</p>
                             
-                            <!-- Info Pembimbing & Durasi -->
-                            <div class="text-xs text-gray-500 space-y-2 border-t pt-4 mt-4">
-                                <p><strong>Pembimbing:</strong> {{ $program->mentor->name ?? 'N/A' }}</p>
-                                <p><strong>Durasi:</strong> {{ $program->duration_days }} Hari</p>
-                                <p><strong>Peserta:</strong> {{ $program->enrolled_users_count }} orang telah bergabung</p>
+                            {{-- [IMPROVISASI] Info detail dengan ikon --}}
+                            <div class="text-xs text-gray-600 space-y-2 border-t pt-4 mt-auto">
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-chalkboard-user w-4 text-center text-blue-500"></i><span><strong>Pembimbing:</strong> {{ $program->mentor->name ?? 'N/A' }}</span></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-clock w-4 text-center text-blue-500"></i><span><strong>Durasi:</strong> {{ $program->duration_days }} Hari</span></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-users w-4 text-center text-blue-500"></i><span><strong>Peserta:</strong> {{ $program->enrolled_users_count }} orang telah bergabung</span></div>
                             </div>
                         </div>
                         
-                        <div class="px-6 pb-6 bg-white mt-auto">
-                            @if(in_array($program->id, $enrolledProgramIds))
-                                {{-- Jika user sudah terdaftar --}}
-                                <a href="{{ route('programs.show', $program) }}" class="block w-full text-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
-                                    Lanjutkan Program
+                        <div class="px-6 pb-6 bg-white">
+                            @if($isEnrolled)
+                                <a href="{{ route('programs.show', $program) }}" class="flex items-center justify-center gap-2 w-full text-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
+                                    Lanjutkan Program <i class="fa-solid fa-arrow-right"></i>
                                 </a>
                             @else
-                                {{-- Jika user belum terdaftar --}}
                                 <form action="{{ route('programs.enroll', $program) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="block w-full text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                                    <button type="submit" class="w-full text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
                                         Ikuti Program
                                     </button>
                                 </form>
@@ -67,11 +85,12 @@
                         </div>
                     </div>
                 @empty
-                    <div class="md:col-span-2 lg:col-span-3 text-center py-16 px-6 bg-white rounded-lg shadow-md">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <h3 class="mt-2 text-lg font-medium text-gray-900">Belum Ada Program</h3>
+                    {{-- [IMPROVISASI] Tampilan kosong yang lebih menarik --}}
+                    <div class="md:col-span-2 lg:col-span-3 text-center py-16 px-6 bg-white rounded-2xl shadow-xl border border-slate-200/50">
+                        <div class="w-20 h-20 mx-auto bg-slate-100 text-slate-400 flex items-center justify-center rounded-full mb-6">
+                            <i class="fa-solid fa-folder-open text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Belum Ada Program</h3>
                         <p class="mt-1 text-sm text-gray-500">Saat ini belum ada program komunitas yang tersedia. Silakan cek kembali nanti.</p>
                     </div>
                 @endforelse

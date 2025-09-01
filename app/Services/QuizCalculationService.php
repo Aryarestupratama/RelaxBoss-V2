@@ -18,31 +18,45 @@ class QuizCalculationService
         // Eager load relasi yang dibutuhkan untuk efisiensi
         $attempt->load('quiz.questions', 'quiz.scoringRules', 'quiz.likertOptions', 'answers.question');
 
-        $answers = $attempt->answers;
         $scoringRules = $attempt->quiz->scoringRules->groupBy('sub_scale');
         
         // Dapatkan nilai maksimum dari skala Likert untuk menangani pertanyaan terbalik
-        $maxLikertValue = $attempt->quiz->likertOptions->max('value') ?? 4; // Default 4 jika tidak ada
+        $maxLikertValue = $attempt->quiz->likertOptions->max('value');
+        if (!$maxLikertValue) {
+             Log::error("Kuis {$attempt->quiz->id} tidak memiliki opsi skala Likert yang valid.");
+             return [];
+        }
 
         // Kelompokkan jawaban berdasarkan sub_scale dari pertanyaannya
-        $answersBySubScale = $answers->groupBy('question.sub_scale');
+        $answersBySubScale = $attempt->answers->groupBy('question.sub_scale');
+        
+        $allSubScales = $attempt->quiz->questions->pluck('sub_scale')->unique();
 
         $finalResults = [];
 
-        // Iterasi melalui setiap grup sub_scale untuk menghitung skor
-        foreach ($answersBySubScale as $subScale => $subScaleAnswers) {
+        foreach ($allSubScales as $subScale) {
             $totalScore = 0;
 
-            foreach ($subScaleAnswers as $answer) {
-                $question = $answer->question;
-                $value = $answer->value;
+            if ($answersBySubScale->has($subScale)) {
+                foreach ($answersBySubScale[$subScale] as $answer) {
+                    $question = $answer->question;
+                    $value = $answer->value;
 
-                // Jika pertanyaan memiliki skor terbalik, balik nilainya
-                if ($question && $question->is_reversed) {
-                    $totalScore += ($maxLikertValue - $value);
-                } else {
-                    $totalScore += $value;
+                    if ($question && $question->is_reversed) {
+                        $totalScore += ($maxLikertValue - $value);
+                    } else {
+                        $totalScore += $value;
+                    }
                 }
+            }
+
+            // [PERBAIKAN KRITIS] Ambil skor maksimum langsung dari tabel scoring_rules
+            $maxScoreForRule = 0;
+            if (isset($scoringRules[$subScale])) {
+                // Cari nilai 'max_score' tertinggi dari semua aturan untuk sub-skala ini
+                $maxScoreForRule = $scoringRules[$subScale]->max('max_score');
+            } else {
+                Log::warning("Tidak ada aturan penilaian untuk sub_scale: {$subScale}, max_score akan menjadi 0.");
             }
 
             // Temukan interpretasi yang sesuai dari scoring_rules
@@ -51,6 +65,7 @@ class QuizCalculationService
             $finalResults[$subScale] = [
                 'score' => $totalScore,
                 'interpretation' => $interpretation,
+                'max_score' => $maxScoreForRule, // <-- Menggunakan max_score dari database
             ];
         }
 
@@ -68,7 +83,6 @@ class QuizCalculationService
     private function findInterpretation($rules, string $subScale, int $score): string
     {
         if (!isset($rules[$subScale])) {
-            Log::warning("Tidak ada aturan penilaian untuk sub_scale: {$subScale}");
             return 'Tidak Terdefinisi';
         }
 

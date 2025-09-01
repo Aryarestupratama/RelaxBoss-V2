@@ -112,23 +112,32 @@ class QuizController extends Controller
     /**
      * Menampilkan halaman hasil kuis yang sudah disimpan.
      */
-    public function showResult(QuizAttempt $attempt)
+    public function showResult(QuizAttempt $attempt, QuizAiRecommendationService $recommender) // <-- 1. Inject service AI
     {
         $this->authorize('view', $attempt);
 
-        // [PERBAIKAN] Logika pemanggilan AI dihapus.
-        // Fungsi ini sekarang hanya bertugas untuk menampilkan data yang sudah ada.
+        // [PERBAIKAN KUNCI] Cek apakah rekomendasi AI belum ada.
+        if (is_null($attempt->ai_recommendation) || is_null($attempt->ai_summary)) {
+            // Jika belum ada, panggil AI untuk membuatnya sekarang (tanpa konteks).
+            $aiResponse = $recommender->generate($attempt);
+            
+            // Simpan hasilnya ke database agar tidak perlu dibuat lagi di masa depan.
+            $attempt->ai_recommendation = $aiResponse['recommendation'];
+            $attempt->ai_summary = $aiResponse['summary'];
+            $attempt->save();
+
+            // Muat ulang data attempt dari database untuk memastikan data terbaru.
+            $attempt->refresh();
+        }
 
         $quiz = $attempt->quiz;
         $results = $attempt->results;
 
-        // Cek jika hasil kalkulasi skor belum ada (sebagai pengaman)
         if (is_null($results)) {
             Log::warning("Attempt #{$attempt->id} diakses tanpa hasil kalkulasi.");
             return redirect()->route('quizzes.index')->with('error', 'Hasil untuk kuis ini belum tersedia atau belum selesai diproses.');
         }
 
-        // Kirim semua data yang ada (termasuk ai_summary yang mungkin null) ke view.
         return view('user.quizzes.results', compact('quiz', 'results', 'attempt'));
     }
 
@@ -173,5 +182,15 @@ class QuizController extends Controller
         
         // Beri nama file dan unduh
         return $pdf->download('hasil-asesmen-'.$quiz->slug.'-'.$attempt->id.'.pdf');
+    }
+
+    public function history()
+    {
+        $attempts = QuizAttempt::where('user_id', Auth::id())
+            ->with('quiz') // Eager load nama kuis untuk efisiensi
+            ->latest() // Tampilkan yang paling baru di atas
+            ->paginate(10);
+
+        return view('user.quizzes.history', compact('attempts'));
     }
 }

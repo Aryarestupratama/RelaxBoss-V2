@@ -1,9 +1,28 @@
 <x-guest-layout>
-    <!-- Session Status (jika ada pesan sukses, dll.) -->
+    @php
+        // [FIX] Mendefinisikan variabel $title untuk digunakan di dalam view ini.
+        $title = 'Buat Akun Baru';
+    @endphp
+
+    {{-- Mengatur judul tab browser dan judul form secara dinamis --}}
+    <x-slot name="title">
+        {{ $title }}
+    </x-slot>
+
+    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div x-data="{
-        step: 1,
+        @php
+            // Logika untuk menentukan step awal jika ada error validasi dari server
+            $initialStep = 1;
+            if ($errors->hasAny(['full_name', 'job_title', 'gender', 'birth_date'])) {
+                $initialStep = 2;
+            } elseif ($errors->has('profile_picture')) {
+                $initialStep = 3;
+            }
+        @endphp
+        step: {{ $initialStep }},
         formData: {
             name: '{{ old('name') }}',
             email: '{{ old('email') }}',
@@ -17,7 +36,6 @@
         profilePicturePreview: null,
         isStepValid() {
             if (this.step === 1) {
-                // Validasi: semua field wajib diisi dan password cocok
                 return this.formData.name &&
                        this.formData.email &&
                        this.formData.password &&
@@ -26,13 +44,12 @@
                        (this.formData.password === this.formData.password_confirmation);
             }
             if (this.step === 2) {
-                // Validasi: semua field wajib diisi
                 return this.formData.full_name &&
                        this.formData.job_title &&
                        this.formData.gender &&
                        this.formData.birth_date;
             }
-            return true; // Step 3 tidak ada validasi wajib
+            return true; // Step 3 has no mandatory validation
         },
         updatePreview(event) {
             const file = event.target.files[0];
@@ -42,27 +59,48 @@
         }
     }">
 
-        <!-- Judul Utama Form -->
+        <!-- Form Title -->
         <div class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Buat Akun Baru</h1>
+            {{-- [FIX] Menggunakan variabel $title yang sudah didefinisikan --}}
+            <h1 class="text-3xl font-bold text-gray-800">{{ $title }}</h1>
             <p class="text-gray-500 mt-2">Hanya butuh beberapa langkah untuk memulai.</p>
         </div>
 
         <!-- Progress Bar -->
         <div class="relative mb-8">
-            <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
-            <div class="absolute top-1/2 left-0 h-0.5 bg-[#007BFF] transition-all duration-500" :style="`width: ${((step - 1) / 2) * 100}%`"></div>
-            <div class="relative flex justify-between">
+            <!-- Wrapper untuk garis agar posisi dan lebarnya akurat -->
+            <div class="absolute top-5 left-0 right-0 mx-auto w-[calc(100%-2.5rem)]">
+                <!-- Garis Latar Belakang -->
+                <div class="w-full h-0.5 bg-gray-200 rounded-full"></div>
+                <!-- Garis Progres Aktif -->
+                <div class="absolute top-0 left-0 h-0.5 bg-[#007BFF] rounded-full transition-all duration-500" :style="`width: ${((step - 1) / 2) * 100}%`"></div>
+            </div>
+
+            <!-- Kontainer Lingkaran Step -->
+            <div class="relative flex justify-between z-10">
+                <!-- Step 1 -->
                 <div class="text-center">
-                    <div :class="step >= 1 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">1</div>
+                    <div :class="step >= 1 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">
+                        <span x-show="step <= 1" x-transition>1</span>
+                        {{-- [DITAMBAHKAN] Ikon centang untuk step yang selesai --}}
+                        <svg x-show="step > 1" x-transition class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
                     <p class="mt-2 text-xs font-semibold" :class="step >= 1 ? 'text-[#007BFF]' : 'text-gray-500'">Akun</p>
                 </div>
+                <!-- Step 2 -->
                 <div class="text-center">
-                    <div :class="step >= 2 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">2</div>
+                    <div :class="step >= 2 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">
+                        <span x-show="step <= 2" x-transition>2</span>
+                         {{-- [DITAMBAHKAN] Ikon centang untuk step yang selesai --}}
+                        <svg x-show="step > 2" x-transition class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
                     <p class="mt-2 text-xs font-semibold" :class="step >= 2 ? 'text-[#007BFF]' : 'text-gray-500'">Profil</p>
                 </div>
+                <!-- Step 3 -->
                 <div class="text-center">
-                    <div :class="step >= 3 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">3</div>
+                    <div :class="step >= 3 ? 'bg-[#007BFF] text-white border-[#007BFF]' : 'bg-white border-gray-300'" class="w-10 h-10 mx-auto rounded-full flex items-center justify-center border-2 transition-all duration-300">
+                        <span>3</span>
+                    </div>
                     <p class="mt-2 text-xs font-semibold" :class="step >= 3 ? 'text-[#007BFF]' : 'text-gray-500'">Foto</p>
                 </div>
             </div>
@@ -72,7 +110,7 @@
         <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
             @csrf
 
-            <!-- Langkah 1: Info Akun -->
+            <!-- Step 1: Account Info -->
             <div x-show="step === 1" class="space-y-4">
                 <div>
                     <x-input-label for="name" value="Nama Panggilan" />
@@ -99,7 +137,7 @@
                 </div>
             </div>
 
-            <!-- Langkah 2: Detail Profil -->
+            <!-- Step 2: Profile Details -->
             <div x-show="step === 2" class="space-y-4" style="display: none;">
                 <div>
                     <x-input-label for="full_name" value="Nama Lengkap" />
@@ -118,6 +156,7 @@
                             <option value="male">Laki-laki</option>
                             <option value="female">Perempuan</option>
                             <option value="other">Lainnya</option>
+                            <option value="private">Tidak ingin menyebutkan</option>
                         </select>
                     </div>
                     <div>
@@ -128,7 +167,7 @@
                 </div>
             </div>
 
-            <!-- Langkah 3: Personalisasi -->
+            <!-- Step 3: Personalization -->
             <div x-show="step === 3" class="space-y-4" style="display: none;">
                 <div>
                     <x-input-label for="profile_picture" value="Unggah Foto Profil (Opsional)" />
@@ -137,18 +176,18 @@
                             <svg x-show="!profilePicturePreview" class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <img x-show="profilePicturePreview" :src="profilePicturePreview" class="mx-auto h-28 w-auto object-contain" alt="Preview Foto Profil">
+                            <img x-show="profilePicturePreview" :src="profilePicturePreview" class="mx-auto h-28 w-auto object-contain" alt="Pratinjau Foto Profil">
                             <div x-show="!profilePicturePreview" class="flex text-sm text-gray-600">
                                 <p class="pl-1">Klik untuk mengunggah</p>
                             </div>
                         </div>
-                        <input id="profile_picture" name="profile_picture" type="file" class="sr-only" @change="updatePreview">
+                        <input id="profile_picture" name="profile_picture" type="file" class="sr-only" @change="updatePreview" accept="image/*">
                     </label>
                 </div>
             </div>
 
 
-            <!-- Tombol Navigasi Form -->
+            <!-- Form Navigation Buttons -->
             <div class="flex items-center mt-8" :class="step > 1 ? 'justify-between' : 'justify-end'">
                 <button type="button" x-show="step > 1" @click="step--" class="text-sm font-semibold text-gray-600 hover:text-[#007BFF] transition-colors">
                     &larr; Kembali
@@ -174,3 +213,4 @@
         </form>
     </div>
 </x-guest-layout>
+

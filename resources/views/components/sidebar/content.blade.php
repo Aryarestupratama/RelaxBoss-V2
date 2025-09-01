@@ -33,8 +33,23 @@
         <a href="{{ route('admin.programs.index') }}"
            class="group flex items-center px-3 py-2 text-sm font-medium rounded-md
                   {{ request()->routeIs('admin.programs.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
-            <svg class="mr-3 h-6 w-6 {{ request()->routeIs('admin.programs.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-            Manajemen Program
+            <svg class="mr-3 h-6 w-6 {{ request()->routeIs('admin.programs.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            Manajemen Komunitas
+        </a>
+
+        <a href="{{ route('admin.specializations.index') }}"
+           class="group flex items-center px-3 py-2 text-sm font-medium rounded-md
+                  {{ request()->routeIs('admin.specializations.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="mr-3 h-6 w-6 {{ request()->routeIs('admin.specializations.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+            Bidang Keahlian
+        </a>
+
+        {{-- [BARU] Link untuk Manajemen Profil Psikolog --}}
+        <a href="{{ route('admin.psychologists.index') }}"
+           class="group flex items-center px-3 py-2 text-sm font-medium rounded-md
+                  {{ request()->routeIs('admin.psychologists.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <svg class="mr-3 h-6 w-6 {{ request()->routeIs('admin.psychologists.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+            Profil Psikolog
         </a>
     </nav>
 

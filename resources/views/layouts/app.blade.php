@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    {{-- Judul halaman dinamis --}}
+    <title>{{ $title ?? '' }}{{ isset($title) ? ' - ' : '' }}RelaxBoss</title>
 
-    <link rel="icon" href="{{ asset('storage/components/icon-relaxboss1.png') }}" type="image/png">
+    {{-- Favicon --}}
+    <link rel="icon" href="{{ asset('storage/components/icon-relaxboss.png') }}">
+    
+    {{-- [BARU] Menambahkan Font Awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Vite Scripts and CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -19,7 +24,7 @@
     @stack('styles')
 </head>
 <body class="h-full font-sans antialiased">
-    <div class="min-h-screen bg-slate-50">
+    <div class="min-h-screen bg-slate-50 pt-20">
         
         <!-- Navbar Bawaan Breeze untuk User yang Login -->
         @include('layouts.navigation')
@@ -38,8 +43,6 @@
             {{ $slot }}
         </main>
 
-        <!-- RelaxMate Chatbot Component (jika Anda punya) -->
-        @include('partials.relaxmate-global')
     </div>
     
     <footer class="py-4 text-center text-sm text-gray-500">
@@ -49,3 +52,4 @@
     @stack('scripts')
 </body>
 </html>
+

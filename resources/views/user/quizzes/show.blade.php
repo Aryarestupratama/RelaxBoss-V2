@@ -1,4 +1,9 @@
 <x-app-layout>
+    {{-- Mengatur judul tab browser --}}
+    <x-slot name="title">
+        Asesmen: {{ $quiz->name }}
+    </x-slot>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Asesmen: {{ $quiz->name }}
@@ -12,22 +17,30 @@
             <div x-data="{
                 currentStep: 0,
                 totalSteps: {{ $quiz->questions->count() }},
+                isSubmitting: false,
 
-                // [PERBAIKAN #1] Logika disederhanakan.
-                // Fungsi ini sekarang hanya menangani perpindahan UI.
                 selectAnswerAndAdvance() {
                     if (this.currentStep < this.totalSteps - 1) {
                         setTimeout(() => {
                             this.currentStep++;
                         }, 300);
                     } else {
-                        // Jika ini pertanyaan terakhir, submit form.
+                        this.isSubmitting = true;
                         setTimeout(() => {
                             this.$refs.quizForm.submit();
-                        }, 300);
+                        }, 500);
                     }
                 },
-            }" class="bg-white shadow-xl rounded-2xl overflow-hidden">
+            }" class="relative bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200/50">
+
+                {{-- Overlay loading saat kuis selesai --}}
+                <div x-show="isSubmitting" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-10" style="display: none;">
+                    <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="mt-4 text-gray-600 font-semibold">Menyelesaikan asesmen...</p>
+                </div>
 
                 <div class="p-6 sm:p-8">
                     {{-- Header Kuis & Progress Bar --}}
@@ -46,26 +59,20 @@
                         </div>
                     </div>
 
-                    {{-- Notifikasi Error --}}
                     @if (session('error'))
                         <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg" role="alert">
                             <p>{{ session('error') }}</p>
                         </div>
                     @endif
 
-                    {{-- Form Kuis --}}
                     <form action="{{ route('quizzes.submit', $quiz) }}" method="POST" id="quizForm" x-ref="quizForm">
                         @csrf
                         
-                        {{-- [PERBAIKAN #2] Input tersembunyi tidak lagi diperlukan. --}}
-
-                        {{-- Kontainer Pertanyaan --}}
-                        {{-- Semua pertanyaan ada di dalam form, tapi hanya satu yang terlihat. --}}
                         @foreach ($quiz->questions as $index => $question)
                             <div x-show="currentStep === {{ $index }}" 
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
+                                 x-transition:enter="transition ease-out duration-300 transform"
+                                 x-transition:enter-start="opacity-0 translate-y-4"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
                                  class="relative min-h-[250px]">
                                 <fieldset>
                                     <legend class="text-lg font-semibold text-gray-800 mb-4">
@@ -75,14 +82,15 @@
                                     <div class="space-y-3">
                                         @foreach ($quiz->likertOptions->sortBy('value') as $option)
                                             <label class="flex items-center p-4 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 has-[:checked]:ring-2 has-[:checked]:ring-blue-200">
-                                                {{-- [PERBAIKAN #3] Input radio sekarang menjadi sumber data utama. --}}
                                                 <input type="radio" 
                                                        name="answers[{{ $question->id }}]" 
                                                        value="{{ $option->value }}"
-                                                       @click="selectAnswerAndAdvance()"
+                                                       {{-- [PERBAIKAN KRITIS] Mengganti @click dengan @change --}}
+                                                       @change="selectAnswerAndAdvance()"
                                                        required
                                                        class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                <span class="ml-4 text-sm font-medium text-gray-700">{{ $option->label }}</span>
+                                                <span class="ml-4 text-sm font-medium text-gray-700 flex-grow">{{ $option->label }}</span>
+                                                <i class="fa-solid fa-check text-blue-600 ml-4 hidden has-[:checked]:block"></i>
                                             </label>
                                         @endforeach
                                     </div>

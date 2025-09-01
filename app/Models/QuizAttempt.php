@@ -48,4 +48,9 @@ class QuizAttempt extends Model
     {
         return $this->hasMany(QuizAnswer::class);
     }
+
+    public function sharedInSessions()
+    {
+        return $this->belongsToMany(ConsultationSession::class, 'session_medical_records');
+    }
 }

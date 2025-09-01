@@ -6,150 +6,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hasil Asesmen - {{ $quiz->name }}</title>
     <style>
-        /* CSS ini dirancang agar ramah untuk konversi ke PDF */
+        /* [IMPROVISASI] CSS dirancang ulang untuk tampilan laporan yang lebih modern dan profesional */
         @page {
-            margin: 25px;
+            margin: 30px;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             color: #333;
-            line-height: 1.6;
-            font-size: 12px;
+            line-height: 1.5;
+            font-size: 11px;
+            background-color: #fff;
         }
         .container {
             width: 100%;
             margin: 0 auto;
         }
         .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #007BFF;
-            padding-bottom: 10px;
+            text-align: left;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #007BFF;
+            padding-bottom: 15px;
         }
-        .header h1 {
+        .header .brand {
+            font-size: 28px;
+            font-weight: bold;
             color: #007BFF;
-            margin: 0;
-            font-size: 24px;
+        }
+        .header .title {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
         }
         .section {
-            margin-bottom: 25px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            border: 1px solid #eee;
+            margin-bottom: 20px;
         }
-        .section h2 {
+        .section-title {
             font-size: 16px;
+            font-weight: bold;
             color: #007BFF;
-            margin-top: 0;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
             margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
         }
         .user-info {
-            margin-bottom: 20px;
-            font-size: 11px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        .user-info table {
+            width: 100%;
         }
         .user-info td {
-            padding: 2px 5px;
+            padding: 4px 0;
+            vertical-align: top;
         }
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .user-info td:first-child {
+            width: 100px;
         }
-        .results-table th, .results-table td {
+        .insight-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #007BFF;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        .score-card {
             border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
-        .results-table th {
-            background-color: #f2f2f2;
+        .score-header {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .score-header .subscale-name {
+            font-size: 14px;
             font-weight: bold;
         }
+        .score-header .interpretation-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            float: right;
+        }
+        .score-bar-container {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 8px;
+            width: 100%;
+        }
+        .score-bar {
+            height: 8px;
+            border-radius: 5px;
+        }
+        .score-value {
+            text-align: right;
+            font-size: 10px;
+            color: #555;
+            margin-top: 4px;
+        }
         .disclaimer {
-            margin-top: 20px;
-            padding: 10px;
+            margin-top: 30px;
+            padding: 15px;
             background-color: #fffbe6;
+            border: 1px solid #ffe58f;
             border-left: 4px solid #facc15;
             font-size: 10px;
             color: #7a6200;
+            border-radius: 5px;
         }
         .footer {
             position: fixed;
-            bottom: 0px;
+            bottom: -20px;
             left: 0px;
             right: 0px;
             height: 40px;
             text-align: center;
             font-size: 10px;
             color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
         }
+        /* Color Classes */
+        .color-green { color: #15803d; } .bg-green { background-color: #22c55e; }
+        .color-yellow { color: #a16207; } .bg-yellow { background-color: #f59e0b; }
+        .color-red { color: #b91c1c; } .bg-red { background-color: #ef4444; }
+        .color-gray { color: #4b5563; } .bg-gray { background-color: #6b7280; }
     </style>
 </head>
 <body>
     <div class="footer">
-        Dokumen ini dibuat oleh RelaxBoss &copy; {{ date('Y') }}
+        Dokumen ini dibuat oleh <strong>RelaxBoss</strong> &copy; {{ date('Y') }}. Informasi bersifat rahasia.
     </div>
 
     <div class="container">
         <div class="header">
-            <h1>RelaxBoss</h1>
-            <p style="margin: 0; font-size: 14px;">Laporan Hasil Asesmen Kesejahteraan</p>
+            <div class="brand">RelaxBoss</div>
+            <div class="title">Laporan Hasil Asesmen Kesejahteraan</div>
         </div>
 
-        <table class="user-info">
-            <tr>
-                <td><strong>Nama:</strong></td>
-                <td>{{ $attempt->user->name }}</td>
-            </tr>
-            <tr>
-                <td><strong>Asesmen:</strong></td>
-                <td>{{ $quiz->name }}</td>
-            </tr>
-            <tr>
-                <td><strong>Tanggal:</strong></td>
-                <td>{{ $attempt->created_at->format('d F Y, H:i') }}</td>
-            </tr>
-        </table>
-
-        <div class="section">
-            <h2>Ringkasan Medis (AI Summary)</h2>
-            <p><i>"{{ $attempt->ai_summary ?? 'Ringkasan tidak tersedia.' }}"</i></p>
-        </div>
-
-        <div class="section">
-            <h2>Rekomendasi Personal (AI Recommendation)</h2>
-            <p>{{ $attempt->ai_recommendation ?? 'Rekomendasi tidak tersedia.' }}</p>
-        </div>
-
-        @if($attempt->user_context)
-        <div class="section">
-            <h2>Konteks dari Pengguna</h2>
-            <p><i>"{{ $attempt->user_context }}"</i></p>
-        </div>
-        @endif
-
-        <div class="section">
-            <h2>Rincian Skor</h2>
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Area Asesmen (Sub-Skala)</th>
-                        <th>Skor</th>
-                        <th>Interpretasi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($results as $subScale => $result)
-                        <tr>
-                            <td>{{ ucfirst($subScale) }}</td>
-                            <td>{{ $result['score'] }}</td>
-                            <td><strong>{{ $result['interpretation'] }}</strong></td>
-                        </tr>
-                    @endforeach
-                </tbody>
+        <div class="user-info">
+            <table>
+                <tr>
+                    <td><strong>Nama</strong></td>
+                    <td>: {{ $attempt->user->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Asesmen</strong></td>
+                    <td>: {{ $quiz->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Tanggal</strong></td>
+                    <td>: {{ $attempt->created_at->isoFormat('dddd, D MMMM YYYY, HH:mm') }} WIB</td>
+                </tr>
             </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Ringkasan Medis (AI Summary)</h2>
+            <div class="summary-box">
+                <p>"{{ $attempt->ai_summary ?? 'Ringkasan tidak tersedia.' }}"</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Rekomendasi Personal (AI Recommendation)</h2>
+            <div class="insight-box">
+                <p>{!! $attempt->ai_recommendation ? nl2br(e($attempt->ai_recommendation)) : 'Rekomendasi tidak tersedia.' !!}</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Rincian Skor</h2>
+            @foreach ($results as $subScale => $result)
+                @php
+                    $interpretation = $result['interpretation'];
+                    $color = match(strtolower($interpretation)) {
+                        'normal', 'ringan' => 'green',
+                        'sedang' => 'yellow',
+                        'parah', 'sangat parah', 'tinggi' => 'red',
+                        default => 'gray',
+                    };
+                    $percentage = $result['max_score'] > 0 ? ($result['score'] / $result['max_score']) * 100 : 0;
+                @endphp
+                <div class="score-card">
+                    <div class="score-header">
+                        <span class="interpretation-badge bg-{{$color}}">{{ $interpretation }}</span>
+                        <div class="subscale-name">{{ ucfirst($subScale) }}</div>
+                    </div>
+                    <div class="score-bar-container">
+                        <div class="score-bar bg-{{$color}}" style="width: {{ $percentage }}%;"></div>
+                    </div>
+                    <div class="score-value">
+                        Skor: <strong>{{ $result['score'] }}</strong> / {{ $result['max_score'] }}
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         <div class="disclaimer">

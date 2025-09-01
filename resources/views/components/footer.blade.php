@@ -60,16 +60,28 @@
 
         <!-- Pemisah dan Copyright -->
         <div class="mt-16 border-t border-slate-800 pt-8 text-center">
-            <!-- Bagian Tim Pembuat -->
-            <div class="mb-6">
-                <h4 class="text-sm font-semibold text-slate-400 tracking-wider uppercase">Dibuat dengan ❤️ oleh</h4>
-                <div class="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-slate-300">
-                    <span>Arya Restu Pratama</span>
-                    <span>[Nama Kreator 2]</span>
-                    <span>[Nama Kreator 3]</span>
-                    <span>[Nama Kreator 4]</span>
+            
+            {{-- [DIUBAH] Bagian Tim Pembuat --}}
+            <div class="mb-8 space-y-6">
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-400 tracking-wider uppercase">Tim Pendiri</h4>
+                    <div class="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2 text-slate-300">
+                        <span>Arya Restu Pratama</span>
+                        <span>Rezky Budiawan</span>
+                        <span>Krisna Septiawan</span>
+                        <span>Muhammad Rifqi Abdillah</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-400 tracking-wider uppercase">Pengembang v2.0</h4>
+                    <div class="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2 text-slate-300">
+                        <span>Arya Restu Pratama</span>
+                        <span>Adika Faris Murtadha Hidayat</span>
+                        <span>Felicia Ivana</span>
+                    </div>
                 </div>
             </div>
+
             <p class="text-sm text-slate-500">&copy; {{ date('Y') }} RelaxBoss. Seluruh hak cipta dilindungi.</p>
         </div>
     </div>
