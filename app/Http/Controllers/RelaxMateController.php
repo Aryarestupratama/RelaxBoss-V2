@@ -30,39 +30,100 @@ class RelaxMateController extends Controller
     }
 
     /**
-     * Mengambil daftar percakapan, dikelompokkan berdasarkan tanggal.
+     * [DIUBAH TOTAL] Logika dirombak agar lebih andal dan efisien.
      */
     public function getConversationGroups()
     {
         try {
-            $userMessages = ChatMessage::where('user_id', Auth::id())
-                ->where('sender_type', 'user')
+            $user = Auth::user();
+            
+            // 1. Ambil semua ID percakapan unik, diurutkan dari yang terbaru
+            $conversationIds = ChatMessage::where('user_id', $user->id)
+                ->latest()
+                ->pluck('conversation_id')
+                ->unique();
+
+            if ($conversationIds->isEmpty()) {
+                return response()->json([]);
+            }
+
+            // 2. Ambil semua pesan yang relevan dalam satu query untuk efisiensi
+            $allMessages = ChatMessage::where('user_id', $user->id)
+                ->whereIn('conversation_id', $conversationIds)
                 ->orderBy('created_at', 'asc')
-                ->get();
+                ->get()
+                ->groupBy('conversation_id');
 
-            // Ambil pesan pertama dari setiap percakapan untuk dijadikan judul
-            $firstMessages = $userMessages->unique('conversation_id');
+            // 3. Proses data menggunakan Koleksi Laravel yang aman
+            $formatted = $conversationIds->map(function ($convId) use ($allMessages) {
+                $messagesInConv = $allMessages->get($convId);
 
-            // Ubah format data dan urutkan dari yang terbaru
-            $conversations = $firstMessages->map(function ($message) {
+                if (!$messagesInConv) {
+                    return null;
+                }
+
+                // Cari judul yang dibuat oleh AI
+                $aiTitle = $messagesInConv->first(function ($msg) {
+                    return $msg->sender_type === 'ai' && isset($msg->metadata['is_title']) && $msg->metadata['is_title'] === true;
+                });
+
+                // Cari pesan pertama dari pengguna sebagai fallback judul
+                $firstUserMessage = $messagesInConv->firstWhere('sender_type', 'user');
+
+                $title = 'Percakapan Baru'; // Judul default jika tidak ada pesan user
+                if ($aiTitle) {
+                    $title = $aiTitle->message_text;
+                } elseif ($firstUserMessage) {
+                    $title = Str::limit($firstUserMessage->message_text, 35);
+                }
+                
                 return [
-                    'conversation_id' => $message->conversation_id,
-                    'title' => Str::limit($message->message_text, 35), // Batasi judul agar rapi
-                    'created_at' => $message->created_at,
+                    'conversation_id' => $convId,
+                    'title' => $title,
+                    'created_at' => $messagesInConv->first()->created_at, // Untuk pengelompokan berdasarkan hari
+                    'latest_activity' => $messagesInConv->last()->created_at // Untuk pengurutan
                 ];
-            })->sortByDesc('created_at');
+            })->filter()->sortByDesc('latest_activity');
 
-            // Kelompokkan berdasarkan tanggal untuk ditampilkan di sidebar
-            $grouped = $conversations->groupBy(function ($item) {
+            // 4. Kelompokkan berdasarkan tanggal untuk ditampilkan di sidebar
+            $grouped = $formatted->groupBy(function ($item) {
                 return $item['created_at']->format('Y-m-d');
             });
 
             return response()->json($grouped);
 
         } catch (\Exception $e) {
-            Log::error('CRASH di RelaxMateController@getConversationGroups', ['error' => $e->getMessage()]);
+            Log::error('CRASH di RelaxMateController@getConversationGroups', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['error' => 'Gagal memuat grup percakapan.'], 500);
         }
+    }
+
+    /**
+     * [BARU] Mengambil percakapan spesifik hari ini.
+     */
+    public function getTodaysConversation()
+    {
+        $todaysConversation = ChatMessage::where('user_id', Auth::id())
+            ->whereDate('created_at', today())
+            ->latest()
+            ->first();
+
+        if (!$todaysConversation) {
+            return response()->json(['conversation_id' => null, 'messages' => []]);
+        }
+
+        $messages = ChatMessage::where('user_id', Auth::id())
+            ->where('conversation_id', $todaysConversation->conversation_id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return response()->json([
+            'conversation_id' => $todaysConversation->conversation_id,
+            'messages' => $messages,
+        ]);
     }
 
     /**
@@ -141,34 +202,31 @@ class RelaxMateController extends Controller
         $conversationId = $validated['conversation_id'];
     
         try {
-            // Simpan pesan pengguna (asumsi service ini hanya menyimpan)
+            $user = Auth::user();
+            $userMessage = $request->input('message');
+            $conversationId = $request->input('conversation_id');
+            
             $this->relaxMateService->saveMessage($user->id, $conversationId, 'user', $userMessage);
             
-            // Dapatkan balasan dari AI
             $aiResponse = $this->relaxMateService->getAiReply($user, $conversationId);
 
             $aiMessage = null;
             if (!empty($aiResponse['reply'])) {
-                // [PERBAIKAN KRITIS] Simpan balasan AI dan dapatkan modelnya untuk dikirim kembali
-                // Asumsi: saveMessage mengembalikan instance ChatMessage yang baru dibuat.
                 $aiMessage = $this->relaxMateService->saveMessage(
-                    $user->id,
-                    $conversationId,
-                    'ai',
-                    $aiResponse['reply'],
-                    $aiResponse['metadata'] ?? null
+                    $user->id, $conversationId, 'ai', $aiResponse['reply'], $aiResponse['metadata'] ?? null
                 );
             }
 
+            $messageCount = ChatMessage::where('conversation_id', $conversationId)->count();
+            if ($messageCount >= 4 && $messageCount % 2 == 0) { // Cek setelah 4, 6, 8, dst. pesan
+                $this->relaxMateService->generateAndSaveTitle($conversationId);
+            }
+
             if (!$aiMessage) {
-                // Fallback jika AI tidak memberikan balasan
                 return response()->json(['error' => 'AI tidak dapat memberikan balasan saat ini.'], 503);
             }
             
-            // [PERBAIKAN KRITIS] Kirim kembali objek ChatMessage yang lengkap dalam format yang diharapkan frontend
-            return response()->json([
-                'reply' => $aiMessage 
-            ]);
+            return response()->json(['reply' => $aiMessage]);
 
         } catch (\Exception $e) {
             Log::error('CRASH di RelaxMateController@sendMessage', ['error' => $e->getMessage()]);

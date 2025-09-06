@@ -56,6 +56,16 @@ class ProgramController extends Controller
         return view('user.programs.show', compact('program', 'materials', 'enrollment'));
     }
 
+    public function detail(Program $program)
+    {
+        // ambil semua materi untuk program ini, urut berdasarkan hari
+        $program->load(['materials' => function($q) {
+            $q->orderBy('day_number', 'asc');
+        }, 'mentor']);
+
+        return view('user.programs.detail', compact('program'));
+    }
+
     /**
      * Mendaftarkan pengguna ke sebuah program.
      */

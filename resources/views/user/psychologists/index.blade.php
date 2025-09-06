@@ -22,26 +22,34 @@
 
                 <!-- Header Halaman & Filter -->
                 <div class="text-center mb-12" data-aos="fade-down">
-                    {{-- [IMPROVISASI] Header yang lebih visual --}}
-                    <div class="w-20 h-20 mx-auto bg-blue-100 text-blue-600 flex items-center justify-center rounded-full mb-6">
-                        <i class="fa-solid fa-user-doctor text-4xl"></i>
+                    {{-- Gambar RelaxMate Consultation --}}
+                    <div class="mb-6 flex justify-center">
+                        <img src="{{ asset('storage/components/relaxmate-consultation.png') }}" 
+                            alt="RelaxMate Consultation" 
+                            class="max-w-full h-auto w-[90%] sm:w-[70%] md:w-[60%] lg:w-[45%] xl:w-[40%] object-contain drop-shadow-md">
                     </div>
+
                     <h1 class="text-4xl font-extrabold text-gray-800 tracking-tight sm:text-5xl">
                         Temukan Psikolog Anda
                     </h1>
                     <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
                         Jelajahi daftar profesional berlisensi kami yang siap membantu Anda dalam perjalanan kesehatan mental Anda.
                     </p>
+
                     <div class="mt-8 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Input Pencarian -->
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-search text-gray-400"></i>
                             </div>
-                            <input x-model.debounce.300ms="search" type="text" placeholder="Cari nama psikolog..." class="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <input x-model.debounce.300ms="search" type="text" 
+                                placeholder="Cari nama psikolog..." 
+                                class="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition">
                         </div>
+
                         <!-- Filter Spesialisasi -->
-                        <select x-model="selectedSpecialization" class="block w-full py-3 px-4 border border-gray-300 rounded-full bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition">
+                        <select x-model="selectedSpecialization" 
+                                class="block w-full py-3 px-4 border border-gray-300 rounded-full bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition">
                             <option value="all">Semua Bidang Keahlian</option>
                             @foreach ($specializations as $specialization)
                                 <option value="{{ $specialization->id }}">{{ $specialization->name }}</option>
@@ -49,6 +57,7 @@
                         </select>
                     </div>
                 </div>
+
 
                 <!-- Grid Kartu Psikolog -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -134,6 +134,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/clear', 'clearConversation')->name('clear'); // [BARU] Menghapus percakapan
         Route::get('/groups', 'getConversationGroups')->name('groups');
         Route::get('/latest', 'getLatestConversation')->name('latest');
+        Route::get('/todays', 'getTodaysConversation')->name('todays');
     });
 
     Route::prefix('quizzes')->name('quizzes.')->group(function () {
@@ -149,15 +150,15 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('programs')->name('programs.')->group(function () {
-        // Halaman daftar semua program
         Route::get('/', [ProgramController::class, 'index'])->name('index');
-        
-        // Halaman detail satu program (setelah mendaftar)
+
+        // halaman detail program
+        Route::get('/{program:slug}/detail', [ProgramController::class, 'detail'])->name('detail');
+
         Route::get('/{program:slug}', [ProgramController::class, 'show'])->name('show');
-        
-        // Endpoint untuk mendaftar ke program
         Route::post('/{program}/enroll', [ProgramController::class, 'enroll'])->name('enroll');
     });
+
 
     Route::get('/psychologists', [PsychologistController::class, 'index'])->name('psychologists.index');
     Route::get('/psychologists/{psychologist}', [PsychologistController::class, 'show'])->name('psychologists.show');

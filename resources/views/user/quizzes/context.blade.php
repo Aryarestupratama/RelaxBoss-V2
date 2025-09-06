@@ -15,11 +15,15 @@
             <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200/50" data-aos="fade-up">
                 
                 <div class="p-6 sm:p-8">
-                    {{-- [IMPROVISASI] Header Halaman yang lebih mendukung --}}
+                   {{-- Header Halaman --}}
                     <div class="text-center">
-                        <div class="w-20 h-20 mx-auto bg-yellow-100 text-yellow-600 flex items-center justify-center rounded-full mb-6">
-                            <i class="fa-solid fa-pen-to-square text-4xl"></i>
+                        {{-- Gambar RelaxMate --}}
+                        <div class="mb-6 flex justify-center">
+                            <img src="{{ asset('storage/components/stress-relaxmate.png') }}" 
+                            alt="RelaxMate sedang stres" 
+                            class="w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 object-contain drop-shadow-md">
                         </div>
+
                         <h1 class="mt-4 text-3xl font-extrabold text-gray-900 tracking-tight">
                             Satu Langkah Terakhir
                         </h1>
@@ -42,7 +46,6 @@
                     {{-- Form Input Konteks --}}
                     <form action="{{ route('quizzes.context.submit', $attempt) }}" method="POST" class="mt-8">
                         @csrf
-                        {{-- [IMPROVISASI] Menambahkan character counter dengan AlpineJS --}}
                         <div x-data="{ context: '{{ old('context', '') }}', minLength: 20, get charCount() { return this.context.length } }">
                             <label for="context" class="block text-sm font-medium text-gray-700">
                                 Apa yang sedang terjadi atau ada di pikiran Anda saat ini?
@@ -60,28 +63,9 @@
                             </p>
                         </div>
 
-                        {{-- [IMPROVISASI] Opsi Hotline yang lebih menonjol --}}
-                        <div class="mt-8 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-r-lg">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fa-solid fa-phone-volume h-6 w-6 text-green-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-sm font-semibold text-green-800">Butuh Bantuan Segera?</h3>
-                                    <p class="text-sm text-green-700 mt-1">
-                                        Jika Anda perlu berbicara dengan seseorang secepatnya, tim kami siap membantu mencarikan psikolog yang paling sesuai untuk Anda.
-                                    </p>
-                                    <div class="mt-3">
-                                        <a href="https://wa.me/6281234567890?text=Halo%20RelaxBoss,%20hasil%20asesmen%20saya%20cukup%20tinggi.%20Bisakah%20Anda%20membantu%20saya%20menemukan%20psikolog%20yang%20sesuai?" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition shadow-md">
-                                            <i class="fab fa-whatsapp"></i>
-                                            Hubungi Hotline via WhatsApp
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{-- [DIHAPUS] Bagian Opsi Hotline Psikolog telah dipindahkan --}}
 
-                        {{-- [IMPROVISASI] Tombol Aksi yang lebih jelas --}}
+                        {{-- Tombol Aksi --}}
                         <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end items-center gap-4">
                             <button type="submit" class="w-full sm:w-auto inline-flex justify-center px-8 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-md">
                                 Kirim & Dapatkan Rekomendasi

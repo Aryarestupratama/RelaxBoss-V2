@@ -19,7 +19,6 @@
                     <!-- Kartu Progres Utama -->
                     <div class="bg-white shadow-xl rounded-2xl border border-slate-200/50 p-6">
                         <div class="flex items-center gap-4 mb-4">
-                            <img class="h-16 w-16 object-cover rounded-lg" src="{{ $program->cover_image ? asset('storage/' . $program->cover_image) : 'https://placehold.co/100x100/E0F2FE/334155?text=Img' }}" alt="Cover Program">
                             <div>
                                 <h1 class="font-bold text-gray-900 leading-tight">{{ $program->name }}</h1>
                                 <p class="text-xs text-gray-500">Oleh: {{ $program->mentor->name ?? 'N/A' }}</p>

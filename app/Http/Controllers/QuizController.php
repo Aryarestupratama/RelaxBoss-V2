@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
+use App\Models\Question; 
 use App\Models\QuizAttempt;
 use App\Services\QuizCalculationService;
 use App\Services\QuizAiRecommendationService;
@@ -16,10 +17,19 @@ class QuizController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+     public function index()
     {
         $user = Auth::user();
-        $quizzes = Quiz::withCount('questions')->latest()->get();
+        
+        // [DIUBAH] Eager load relasi questions untuk mendapatkan sub_scale
+        $quizzes = Quiz::with(['questions' => function ($query) {
+                // Ambil hanya kolom sub_scale yang unik untuk efisiensi
+                $query->select('quiz_id', 'sub_scale')->distinct();
+            }])
+            ->withCount('questions')
+            ->latest()
+            ->get();
+
         $todaysAttempts = QuizAttempt::where('user_id', $user->id)
             ->whereDate('created_at', today())
             ->latest()
@@ -31,9 +41,14 @@ class QuizController extends Controller
             if ($quiz->attempted_today) {
                 $quiz->latest_attempt_id_today = $todaysAttempts->get($quiz->id)->id;
             }
+            // [BARU] Lampirkan daftar sub_scale ke setiap objek kuis untuk digunakan di AlpineJS
+            $quiz->sub_scales = $quiz->questions->pluck('sub_scale');
         });
 
-        return view('user.quizzes.index', compact('quizzes'));
+        // [BARU] Ambil semua kategori sub_scale yang unik dari tabel questions untuk filter
+        $subScaleCategories = Question::pluck('sub_scale')->unique()->sort()->values();
+
+        return view('user.quizzes.index', compact('quizzes', 'subScaleCategories'));
     }
 
     public function showIntroduction(Quiz $quiz)

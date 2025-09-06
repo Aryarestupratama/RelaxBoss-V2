@@ -1,61 +1,49 @@
 <x-app-layout>
-    {{-- Mengatur judul tab browser --}}
     <x-slot name="title">
         Asesmen: {{ $quiz->name }}
     </x-slot>
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Asesmen: {{ $quiz->name }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
+    {{-- [IMPROVISASI] Latar belakang gradien untuk suasana yang lebih tenang --}}
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-emerald-50 py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Komponen Kuis dengan AlpineJS --}}
             <div x-data="{
                 currentStep: 0,
                 totalSteps: {{ $quiz->questions->count() }},
                 isSubmitting: false,
+                selectedOption: null,
 
-                selectAnswerAndAdvance() {
+                selectAnswerAndAdvance(value) {
+                    this.selectedOption = value;
                     if (this.currentStep < this.totalSteps - 1) {
                         setTimeout(() => {
                             this.currentStep++;
-                        }, 300);
+                            this.selectedOption = null; // Reset pilihan untuk pertanyaan berikutnya
+                        }, 400); // Jeda sedikit lebih lama untuk efek visual
                     } else {
                         this.isSubmitting = true;
                         setTimeout(() => {
                             this.$refs.quizForm.submit();
-                        }, 500);
+                        }, 800);
                     }
                 },
-            }" class="relative bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200/50">
+            }" class="relative bg-white/70 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden border border-white/50">
 
-                {{-- Overlay loading saat kuis selesai --}}
-                <div x-show="isSubmitting" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-10" style="display: none;">
+                {{-- Overlay loading --}}
+                <div x-show="isSubmitting" x-transition.opacity class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
                     <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <p class="mt-4 text-gray-600 font-semibold">Menyelesaikan asesmen...</p>
+                    <p class="mt-4 text-gray-600 font-semibold">Menganalisis jawaban Anda...</p>
                 </div>
 
                 <div class="p-6 sm:p-8">
-                    {{-- Header Kuis & Progress Bar --}}
-                    <div class="text-center mb-8">
-                        <h1 class="text-3xl font-bold text-gray-900">{{ $quiz->name }}</h1>
-                        <p class="mt-2 text-gray-600">Jawab setiap pertanyaan dengan jujur sesuai yang Anda rasakan.</p>
-                    </div>
-
-                    {{-- Progress Bar --}}
+                    {{-- [IMPROVISASI] Header & Progress Bar yang Didesain Ulang --}}
                     <div class="mb-8">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-gray-500">Pertanyaan <span x-text="currentStep + 1"></span> dari <span x-text="totalSteps"></span></span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" :style="`width: ${((currentStep + 1) / totalSteps) * 100}%`"></div>
+                        <p class="text-sm font-semibold text-blue-600">Pertanyaan <span x-text="currentStep + 1"></span> dari <span x-text="totalSteps"></span></p>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2.5 rounded-full transition-all duration-500" :style="`width: ${((currentStep + 1) / totalSteps) * 100}%`"></div>
                         </div>
                     </div>
 
@@ -71,26 +59,32 @@
                         @foreach ($quiz->questions as $index => $question)
                             <div x-show="currentStep === {{ $index }}" 
                                  x-transition:enter="transition ease-out duration-300 transform"
-                                 x-transition:enter-start="opacity-0 translate-y-4"
+                                 x-transition:enter-start="opacity-0 translate-y-8"
                                  x-transition:enter-end="opacity-100 translate-y-0"
-                                 class="relative min-h-[250px]">
+                                 class="relative min-h-[350px]">
                                 <fieldset>
-                                    <legend class="text-lg font-semibold text-gray-800 mb-4">
+                                    {{-- [IMPROVISASI] Tampilan Pertanyaan yang Lebih Fokus --}}
+                                    <legend class="text-2xl font-bold text-center text-gray-800 mb-8">
                                         {{ $question->text }}
                                     </legend>
                                     
-                                    <div class="space-y-3">
+                                    {{-- [IMPROVISASI] Opsi Jawaban Menjadi Kartu Interaktif --}}
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         @foreach ($quiz->likertOptions->sortBy('value') as $option)
-                                            <label class="flex items-center p-4 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 has-[:checked]:ring-2 has-[:checked]:ring-blue-200">
+                                            <label class="relative flex items-center p-4 border-2 rounded-xl transition-all duration-200 cursor-pointer"
+                                                   :class="{
+                                                        'border-blue-500 bg-blue-50 ring-2 ring-blue-200 shadow-lg': selectedOption == {{ $option->value }},
+                                                        'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/50': selectedOption !== {{ $option->value }}
+                                                   }">
+                                                
                                                 <input type="radio" 
                                                        name="answers[{{ $question->id }}]" 
                                                        value="{{ $option->value }}"
-                                                       {{-- [PERBAIKAN KRITIS] Mengganti @click dengan @change --}}
-                                                       @change="selectAnswerAndAdvance()"
+                                                       @change="selectAnswerAndAdvance({{ $option->value }})"
                                                        required
-                                                       class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                <span class="ml-4 text-sm font-medium text-gray-700 flex-grow">{{ $option->label }}</span>
-                                                <i class="fa-solid fa-check text-blue-600 ml-4 hidden has-[:checked]:block"></i>
+                                                       class="sr-only">
+                                                
+                                                <span class="font-semibold text-gray-700 text-center w-full">{{ $option->label }}</span>
                                             </label>
                                         @endforeach
                                     </div>
@@ -99,20 +93,19 @@
                         @endforeach
 
                         {{-- Tombol Navigasi --}}
-                        <div class="mt-8 pt-6 border-t flex justify-start">
+                        <div class="mt-10 pt-6 border-t flex justify-between items-center">
                             <button type="button" @click="if (currentStep > 0) currentStep--"
-                                    class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition"
+                                    class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition flex items-center gap-2"
                                     :class="{ 'opacity-50 cursor-not-allowed': currentStep === 0 }">
-                                &larr; Sebelumnya
+                                <i class="fa-solid fa-arrow-left"></i>
+                                Sebelumnya
                             </button>
+                             <a href="{{ route('quizzes.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Batalkan</a>
                         </div>
                     </form>
                 </div>
             </div>
-
-            <div class="text-center mt-6">
-                <a href="{{ route('quizzes.index') }}" class="text-sm text-gray-600 hover:text-gray-900">&larr; Kembali ke daftar asesmen</a>
-            </div>
         </div>
     </div>
 </x-app-layout>
+

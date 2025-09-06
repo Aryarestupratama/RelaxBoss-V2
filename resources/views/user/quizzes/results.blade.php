@@ -15,7 +15,6 @@
 
             {{-- Header Halaman Hasil --}}
             <div class="text-center mb-12" data-aos="fade-down">
-                {{-- [IMPROVISASI] Ikon header yang lebih menonjol --}}
                 <div class="w-20 h-20 mx-auto bg-green-100 text-green-600 flex items-center justify-center rounded-full mb-6">
                     <i class="fa-solid fa-square-poll-vertical text-4xl"></i>
                 </div>
@@ -31,14 +30,14 @@
             <div class="bg-white shadow-xl rounded-2xl p-6 sm:p-8 space-y-8 border border-slate-200/50" data-aos="fade-up">
                 
                 <!-- 1. Rekomendasi Personal dari AI -->
-                {{-- [IMPROVISASI] Bagian ini dibuat menonjol sebagai "Insight" utama --}}
                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
                         <i class="fa-solid fa-sparkles text-blue-500"></i>
                         Insight & Rekomendasi untuk Anda
                     </h2>
-                    <div class="mt-4 prose prose-blue max-w-none text-gray-600 leading-relaxed">
-                        {!! $attempt->ai_recommendation ? nl2br(e($attempt->ai_recommendation)) : '<p>Rekomendasi sedang dipersiapkan. Silakan muat ulang beberapa saat lagi.</p>' !!}
+                    {{-- [PERBAIKAN] Menambahkan kelas text-justify untuk membuat teks rata kanan-kiri --}}
+                    <div class="mt-4 prose prose-blue max-w-none text-gray-600 leading-relaxed text-justify">
+                        {!! $attempt->ai_recommendation ? \Illuminate\Support\Str::markdown($attempt->ai_recommendation) : '<p>Rekomendasi sedang dipersiapkan. Silakan muat ulang beberapa saat lagi.</p>' !!}
                     </div>
                 </div>
 
@@ -73,7 +72,6 @@
                                        <span class="text-xl font-bold text-gray-900">{{ $result['score'] }} <span class="text-sm font-normal text-gray-500">/ {{ $result['max_score'] }}</span></span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
-                                        {{-- [IMPROVISASI] Logika persentase progress bar diimplementasikan --}}
                                         <div class="bg-{{$colorClasses}}-500 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
                                     </div>
                                 </div>
@@ -88,7 +86,7 @@
                         <i class="fa-solid fa-book-medical text-xl text-blue-500 mr-3"></i>
                         <h2 class="text-2xl font-bold text-gray-800">Rekam Medis</h2>
                     </div>
-                    <p class="text-gray-600 mb-4">Ringkasan ini dapat Anda simpan atau bagikan dengan psikolog Anda untuk membantu sesi konsultasi.</p>
+                    <p class="text-gray-600 mb-4">Ringkasan ini dapat Anda simpan untuk catatan pribadi atau dibagikan dengan psikolog Anda saat sesi konsultasi.</p>
                     <div class="p-4 bg-slate-50 border border-dashed rounded-lg text-sm text-slate-700 italic">
                         "{{ $attempt->ai_summary ?? 'Ringkasan belum tersedia.' }}"
                     </div>
@@ -97,10 +95,44 @@
                             <i class="fa-solid fa-download"></i>
                             Unduh PDF
                         </a>
-                        <button type="button" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-100 transition">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            Kirim ke Psikolog
-                        </button>
+                    </div>
+                </div>
+
+                <!-- Bagian Hotline Bantuan Segera -->
+                <div class="p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-r-lg">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-phone-volume h-6 w-6 text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-base font-semibold text-green-800">Merasa perlu berbicara lebih lanjut?</h3>
+                            <p class="text-sm text-green-700 mt-1">
+                                Tim kami siap membantu Anda menemukan psikolog yang tepat berdasarkan hasil ini. Hubungi hotline kami untuk mendapatkan rekomendasi personal.
+                            </p>
+                            <div class="mt-4">
+                                @php
+                                    $userName = Auth::user()->name;
+                                    $quizName = $attempt->quiz->name;
+                                    
+                                    $aiSummary = $attempt->ai_summary ?? 'Ringkasan belum tersedia.';
+
+                                    $formattedResults = [];
+                                    if (is_array($attempt->results)) {
+                                        foreach ($attempt->results as $subScale => $result) {
+                                            $formattedResults[] = '- ' . ucfirst($subScale) . ': ' . ($result['interpretation'] ?? 'N/A');
+                                        }
+                                    }
+                                    $resultString = implode("\n", $formattedResults);
+
+                                    $message = "Halo RelaxBoss, saya {$userName}.\n\nSaya baru saja menyelesaikan asesmen '{$quizName}'.\n\nBerikut adalah ringkasan AI dari hasil saya:\n\"{$aiSummary}\"\n\nDetail skor:\n{$resultString}\n\nBerdasarkan hasil ini, bisakah Anda membantu merekomendasikan psikolog yang cocok untuk saya? Terima kasih.";
+                                    $whatsappUrl = 'https://wa.me/6289604219915?text=' . urlencode($message);
+                                @endphp
+                                <a href="{{ $whatsappUrl }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition shadow-md">
+                                    <i class="fab fa-whatsapp"></i>
+                                    Hubungi Hotline via WhatsApp
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -125,3 +157,4 @@
         </div>
     </div>
 </x-app-layout>
+

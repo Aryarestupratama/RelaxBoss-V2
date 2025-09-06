@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\ChatMessage;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RelaxMateService
 {
@@ -31,6 +33,11 @@ class RelaxMateService
     {
         return ChatMessage::where('user_id', $userId)
             ->where('conversation_id', $conversationId)
+            // [PERBAIKAN] Pastikan pesan judul tidak ikut terambil dalam riwayat chat normal
+            ->where(function ($query) {
+                $query->whereNull('metadata->is_title')
+                      ->orWhere('metadata->is_title', '!=', true);
+            })
             ->orderBy('created_at', 'asc')
             ->get();
     }
@@ -55,6 +62,68 @@ class RelaxMateService
                 'reply' => "Maaf, saya sedang mengalami sedikit kendala. Bisakah Anda mengulangi pertanyaan Anda?",
                 'metadata' => ['action' => 'error']
             ];
+        }
+    }
+
+    /**
+     * [BARU] Membuat judul ringkasan untuk percakapan dan menyimpannya.
+     */
+    public function generateAndSaveTitle(string $conversationId)
+    {
+        $user = Auth::user();
+        if (!$user) return;
+
+        $history = $this->getConversationHistory($user->id, $conversationId);
+
+        if (count($history) < 4) return;
+
+        $promptForTitle = "Berdasarkan percakapan berikut, buatlah sebuah judul singkat (maksimal 5 kata) yang merangkum tema utamanya:\n\n";
+        foreach ($history as $message) {
+            $sender = $message->sender_type === 'user' ? 'User' : 'AI';
+            $promptForTitle .= "{$sender}: {$message->message_text}\n";
+        }
+        
+        // [PERBAIKAN] Menggunakan GeminiApiService untuk membuat judul
+        $titleText = $this->getAiReplyFromText($promptForTitle); 
+
+        if ($titleText) {
+            // Cek apakah sudah ada judul, jika ada, update. Jika tidak, buat baru.
+            ChatMessage::updateOrCreate(
+                [
+                    'conversation_id' => $conversationId,
+                    'metadata->is_title' => true,
+                ],
+                [
+                    'user_id' => $user->id,
+                    'sender_type' => 'ai',
+                    'message_text' => Str::remove('"', $titleText), // Hapus tanda kutip jika AI menambahkannya
+                    'metadata' => ['is_title' => true],
+                ]
+            );
+        }
+    }
+
+    /**
+     * [BARU] Helper untuk memanggil AI hanya dengan teks dan mendapatkan teks kembali.
+     */
+    private function getAiReplyFromText(string $prompt): ?string
+    {
+        try {
+            // Buat "pesan palsu" untuk dikirim ke API Gemini
+            $fakeHistory = collect([
+                new ChatMessage(['sender_type' => 'user', 'message_text' => $prompt])
+            ]);
+
+            // Gunakan system prompt yang netral
+            $systemPrompt = "Anda adalah asisten yang pandai meringkas.";
+
+            $response = $this->geminiApi->generateContent($systemPrompt, $fakeHistory);
+
+            return $response['reply'] ?? null;
+
+        } catch (Exception $e) {
+            Log::error('Gagal membuat judul AI', ['error' => $e->getMessage()]);
+            return null;
         }
     }
 

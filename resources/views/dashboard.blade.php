@@ -8,17 +8,33 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="space-y-8">
                 
-                <!-- 1. Header Sambutan & Status Cepat -->
+               <!-- 1. Header Sambutan & Status Cepat -->
                 <div class="bg-gradient-to-br from-white to-slate-50 border border-slate-200/50 shadow-lg sm:rounded-2xl p-6 md:p-8" data-aos="fade-down">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
+                            @php
+                                $hour = now()->format('H');
+                                $isNight = $hour >= 18 || $hour < 6; // 18.00 - 05.59 dianggap malam
+                            @endphp
+
                             <div class="flex items-center gap-4">
-                                <div class="hidden sm:block text-4xl text-yellow-400">
-                                    <i class="fa-solid fa-sun"></i>
+                                {{-- Gambar RelaxMate Dinamis --}}
+                                <div class="hidden sm:block w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 flex-shrink-0">
+                                    @if($isNight)
+                                        <img src="{{ asset('storage/components/relaxmate-night.png') }}" alt="RelaxMate Night" class="w-full h-full object-contain">
+                                    @else
+                                        <img src="{{ asset('storage/components/relaxmate-morning.png') }}" alt="RelaxMate Morning" class="w-full h-full object-contain">
+                                    @endif
                                 </div>
+
+                                {{-- Teks Sambutan --}}
                                 <div>
-                                    <h1 class="text-3xl font-bold text-gray-800">Selamat Datang, {{ $user->name }}!</h1>
-                                    <p class="mt-1 text-gray-500">Siap untuk hari yang lebih tenang dan produktif?</p>
+                                    <h1 class="text-3xl font-bold text-gray-800">
+                                        Selamat {{ $isNight ? 'Malam' : 'Datang' }}, {{ $user->name }}!
+                                    </h1>
+                                    <p class="mt-1 text-gray-500">
+                                        {{ $isNight ? 'Waktunya istirahat dengan tenang 🌙' : 'Siap untuk hari yang lebih tenang dan produktif? ☀️' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -43,9 +59,9 @@
                             </div>
                         @else
                             <div class="text-left md:text-right flex-shrink-0 w-full md:w-auto">
-                                 <a href="{{ route('quizzes.index') }}" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition transform duration-300">
-                                     Ambil Asesmen Pertama &rarr;
-                                 </a>
+                                <a href="{{ route('quizzes.index') }}" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition transform duration-300">
+                                    Ambil Asesmen Pertama &rarr;
+                                </a>
                             </div>
                         @endif
                     </div>
@@ -108,7 +124,8 @@
                         </div>
                         <h2 class="text-xl font-bold text-gray-800">Butuh Teman Bicara?</h2>
                         <p class="text-gray-500 mt-1 mb-4 flex-grow">AI RelaxMate siap mendengarkan dan memberikan panduan kapan pun Anda butuhkan, tanpa penilaian.</p>
-                        <a href="#" class="w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                        <a href="{{ route('relaxmate.index') }}" 
+                        class="w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
                             Mulai Percakapan
                         </a>
                     </div>

@@ -8,6 +8,8 @@ import "trix";
 import AOS from "aos";
 import Typed from "typed.js";
 
+import { todoApp } from "./todoApp.js";
+
 // Inisialisasi AOS agar aktif di seluruh aplikasi
 AOS.init({
     duration: 1000, // Durasi animasi dalam milidetik
@@ -21,5 +23,7 @@ window.Typed = Typed;
 // --- SELESAI PENAMBAHAN KODE ---
 
 window.Alpine = Alpine;
+
+Alpine.data("todoApp", todoApp);
 
 Alpine.start();
