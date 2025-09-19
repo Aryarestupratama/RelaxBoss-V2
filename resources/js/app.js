@@ -2,28 +2,20 @@ import "./bootstrap";
 
 import Alpine from "alpinejs";
 
-// --- MULAI PENAMBAHAN KODE ---
+// Impor lain yang Anda butuhkan
 import "trix";
-// Impor AOS dan Typed.js
 import AOS from "aos";
 import Typed from "typed.js";
 
-import { todoApp } from "./todoApp.js";
-
-// Inisialisasi AOS agar aktif di seluruh aplikasi
+// Inisialisasi AOS
 AOS.init({
-    duration: 1000, // Durasi animasi dalam milidetik
-    once: true, // Apakah animasi hanya terjadi sekali
+    duration: 1000,
+    once: true,
 });
 
-// Membuat Typed.js tersedia secara global jika diperlukan di file Blade
-// Ini adalah cara mudah agar script di Blade tetap berfungsi
+// Jadikan variabel global jika diperlukan oleh bagian lain dari aplikasi Anda
 window.Typed = Typed;
-
-// --- SELESAI PENAMBAHAN KODE ---
-
 window.Alpine = Alpine;
 
-Alpine.data("todoApp", todoApp);
-
+// Mulai Alpine
 Alpine.start();

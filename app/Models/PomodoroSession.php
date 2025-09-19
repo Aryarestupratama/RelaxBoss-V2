@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\PomodoroType;
+use App\Enums\SessionStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,41 +12,33 @@ class PomodoroSession extends Model
 {
     use HasFactory;
 
-    /**
-     * Atribut yang dapat diisi secara massal.
-     * @var array
-     */
     protected $fillable = [
         'user_id',
         'todo_id',
-        'type',
+        'type', // <-- DIKEMBALIKAN, sangat penting
+        'status',
         'start_time',
         'end_time',
-        'duration_minutes',
-        'status',
-        'remaining_seconds', // <-- Tambahkan ini
+        'duration_minutes', // <-- Penamaan yang lebih jelas
+        'remaining_seconds', // <-- Penamaan yang lebih jelas
     ];
 
-    /**
-     * Tipe data asli untuk atribut.
-     * @var array
-     */
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
-    ]; // [cite: 240, 241]
+        'duration_minutes' => 'integer',
+        'remaining_seconds' => 'integer',
+        
+        // Menggunakan Enum
+        'type' => PomodoroType::class,
+        'status' => SessionStatus::class,
+    ];
 
-    /**
-     * Relasi ke User yang menjalankan sesi.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi ke Tugas yang dikerjakan (jika ada).
-     */
     public function todo(): BelongsTo
     {
         return $this->belongsTo(Todo::class);

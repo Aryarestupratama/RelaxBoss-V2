@@ -23,7 +23,7 @@
                                     @if($isNight)
                                         <img src="{{ asset('storage/components/relaxmate-night.png') }}" alt="RelaxMate Night" class="w-full h-full object-contain">
                                     @else
-                                        <img src="{{ asset('storage/components/relaxmate-morning.png') }}" alt="RelaxMate Morning" class="w-full h-full object-contain">
+                                        <img src="{{ asset('build/assets/relaxmate-morning.png') }}" alt="RelaxMate Morning" class="w-full h-full object-contain">
                                     @endif
                                 </div>
 

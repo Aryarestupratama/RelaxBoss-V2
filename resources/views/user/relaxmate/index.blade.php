@@ -95,7 +95,8 @@
                 {{-- Kontainer Pesan (scrollable) --}}
                 <div 
                     x-ref="chatArea" 
-                    class="flex-1 overflow-y-auto pr-2 scroll-smooth flex flex-col justify-end">
+                    class="flex-1 overflow-y-auto pr-2 scroll-smooth flex flex-col-reverse"
+                >
                     
                     <template x-for="(message, index) in messages" :key="message.id || index">
                         <div class="space-y-4">

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigInteger('user_id')->unsigned(); // BIGINT(20) UNSIGNED NOT NULL
             $table->bigInteger('project_id')->unsigned()->nullable(); // BIGINT(20) UNSIGNED NULL DEFAULT NULL
             $table->bigInteger('parent_task_id')->unsigned()->nullable(); // BIGINT(20) UNSIGNED NULL DEFAULT NULL
-            $table->string('task'); // VARCHAR(255) NOT NULL
+            $table->string('title'); // VARCHAR(255) NOT NULL
             $table->text('notes')->nullable(); // TEXT NULL DEFAULT NULL
             $table->enum('status', ['todo', 'in_progress', 'done'])->default('todo'); // ENUM('todo','in_progress','done') NOT NULL DEFAULT 'todo'
             $table->enum('priority', ['low', 'medium', 'high', 'focus'])->default('medium'); // ENUM('low','medium','high','focus') NOT NULL DEFAULT 'medium'

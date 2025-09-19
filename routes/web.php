@@ -9,6 +9,8 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\PsychologistController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\TodoController; 
+use App\Http\Controllers\ProjectController; 
 
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\QuizManagementController;
@@ -170,6 +172,32 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/consultation/{session}', [ConsultationController::class, 'show'])->name('consultation.show');
 
+    // Rute untuk menampilkan HALAMAN to-do list
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+
+    // Kelompokkan semua rute API di bawah prefix /api untuk kejelasan
+    Route::prefix('api')->middleware('auth:sanctum')->group(function () {
+
+        // Rute API untuk Proyek
+        Route::apiResource('projects', ProjectController::class);
+
+        // Rute API untuk Tugas
+        Route::apiResource('todos', TodoController::class);
+        
+        Route::prefix('todos/{todo}')->name('todos.')->controller(TodoController::class)->group(function () {
+            Route::patch('/status', 'updateStatus')->name('status.update');
+            Route::patch('/quadrant', 'updateQuadrant')->name('quadrant.update');
+            Route::get('/ai-messages', 'getAiMessages')->name('ai.messages');
+            Route::post('/ai-messages', 'askAi')->name('ai.ask');
+            Route::post('/pomodoro', 'startPomodoro')->name('pomodoro.start');
+        });
+
+        // Rute untuk mengelola sesi pomodoro
+        Route::patch('/pomodoro-sessions/{session}', [TodoController::class, 'updatePomodoro'])->name('pomodoro.update');
+        
+        // [BARU] Rute untuk melanjutkan sesi pomodoro yang dijeda
+        Route::patch('/pomodoro-sessions/{session}/resume', [TodoController::class, 'resumePomodoro'])->name('pomodoro.resume');
+    });
 });
 
 require __DIR__.'/auth.php';

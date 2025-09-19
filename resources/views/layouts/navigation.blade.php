@@ -9,7 +9,7 @@ if (Auth::check()) {
         ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
         ['label' => 'AI RelaxMate', 'route' => 'relaxmate.index', 'active' => request()->routeIs('relaxmate.*')],
         ['label' => 'Asesmen', 'route' => 'quizzes.index', 'active' => request()->routeIs('quizzes.*')],
-        // ['label' => 'TodoList Pomodoro', 'route' => 'todos.index', 'active' => request()->routeIs('todos.*')],
+        ['label' => 'SuperTask', 'route' => 'todos.index', 'active' => request()->routeIs('todos.*')],
         ['label' => 'Komunitas', 'route' => 'programs.index', 'active' => request()->routeIs('programs.*')],
         ['label' => 'Konsultasi', 'route' => 'psychologists.index', 'active' => request()->routeIs('psychologists.*')],
     ];

@@ -6,6 +6,7 @@ use App\Enums\UserRole; // <-- Import Enum
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany; // <-- DITAMBAHKAN
 
 class User extends Authenticatable
 {
@@ -115,4 +116,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(ConsultationSession::class, 'user_id');
     }
+
+    /**
+     * Mendapatkan semua proyek yang dimiliki oleh pengguna.
+     */
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    /**
+     * Mendapatkan semua tugas yang dimiliki oleh pengguna.
+     */
+    public function todos(): HasMany
+    {
+        return $this->hasMany(Todo::class);
+    }
+
+    /**
+     * [BARU] Mendapatkan semua sesi Pomodoro yang dimiliki oleh pengguna.
+     * Metode ini diperlukan untuk memeriksa sesi yang sedang aktif.
+     */
+    public function pomodoroSessions(): HasMany
+    {
+        return $this->hasMany(PomodoroSession::class);
+    }
 }
+

@@ -24,68 +24,97 @@ class GeminiApiService
         }
     }
 
-    public function generateContent(string $systemPrompt, Collection $history): array
+    public function generateContent(string $systemPrompt, Collection $history, ?array $tools = null): array
     {
+        // [DIUBAH] Memanggil metode buildRequestBody yang baru
+        $requestBody = $this->buildRequestBody($systemPrompt, $history, $tools);
+        Log::debug('Gemini API Request Body:', $requestBody);
+
         try {
-            $requestBody = $this->buildRequestBody($systemPrompt, $history);
-
             $response = Http::timeout($this->timeout)
+                ->retry(3, 100, function ($exception, $request) {
+                    return $exception instanceof RequestException && in_array($exception->response->status(), [429, 500, 503]);
+                }, throw: false)
                 ->post($this->apiUrl . '?key=' . $this->apiKey, $requestBody);
-
+            
             $response->throw();
 
             $responseData = $response->json();
-            $content = data_get($responseData, 'candidates.0.content.parts.0.text');
+            Log::debug('Gemini API Response Body:', $responseData);
 
-            if (is_null($content)) {
-                Log::warning('Gemini API memberikan respons valid tetapi tanpa konten teks.', ['response' => $responseData]);
+            $part = data_get($responseData, 'candidates.0.content.parts.0');
+
+            if (is_null($part)) {
                 throw new Exception('Menerima respons kosong dari Gemini.');
             }
             
-            $decodedContent = json_decode($content, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                Log::error('Gagal mem-parsing JSON dari respons Gemini.', ['raw_content' => $content]);
-                throw new Exception('Menerima format JSON yang tidak valid dari Gemini.');
+            if (isset($part['functionCall'])) {
+                return $part;
             }
 
-            return $decodedContent;
+            if (isset($part['text'])) {
+                $decoded = json_decode($part['text'], true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    return $decoded;
+                }
+                return ['text' => $part['text']];
+            }
+
+            return $part;
 
         } catch (RequestException $e) {
-            Log::error('Gemini API Request Exception', ['error' => $e->getMessage(), 'response_body' => $e->response->body()]);
-            throw new Exception('Gagal berkomunikasi dengan Gemini API.');
+            Log::error('Gemini API Request Exception', [
+                'error' => $e->getMessage(),
+                'response_body' => $e->response?->body()
+            ]);
+            if ($e->response && $e->response->status() === 503) {
+                throw new Exception('Layanan AI sedang sibuk. Silakan coba lagi sebentar.');
+            }
+            throw new Exception('Gagal berkomunikasi dengan Gemini API setelah beberapa kali percobaan.');
         } catch (Exception $e) {
             Log::error('GeminiApiService general error', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-    private function buildRequestBody(string $systemPrompt, Collection $history): array
+    /**
+     * [BARU & DIPERBAIKI] Membangun request body untuk Gemini API menggunakan systemInstruction.
+     */
+    private function buildRequestBody(string $systemPrompt, Collection $history, ?array $tools): array
     {
-        // [PERBAIKAN] Untuk tugas generate satu kali, lebih andal menempatkan prompt utama
-        // sebagai pesan 'user' pertama di dalam 'contents'.
-        $contents = [
-            [
-                'role' => 'user',
-                'parts' => [['text' => $systemPrompt]]
-            ]
-        ];
-
-        // Riwayat (jika ada) akan ditambahkan setelahnya. Untuk kuis, ini akan kosong.
+        // Format riwayat percakapan
         $formattedHistory = $history->map(function ($message) {
+            if (($message['role'] ?? null) === 'function') {
+                return [
+                    'role' => 'function',
+                    'parts' => [['functionResponse' => [
+                        'name' => $message['name'],
+                        'response' => ['content' => $message['content']]
+                    ]]]
+                ];
+            }
             return [
-                'role' => $message->sender_type === 'ai' ? 'model' : 'user',
-                'parts' => [['text' => $message->message_text]]
+                'role' => ($message['sender_type'] ?? '') === 'ai' ? 'model' : 'user',
+                'parts' => [['text' => $message['message_text'] ?? '']]
             ];
         })->values()->all();
 
-        return [
-            // 'system_instruction' dihapus untuk pendekatan ini
-            'contents' => array_merge($contents, $formattedHistory),
+        $body = [
+            'contents' => $formattedHistory,
+            'systemInstruction' => [ // Menggunakan bidang khusus untuk instruksi sistem
+                'parts' => [['text' => $systemPrompt]]
+            ],
             'generationConfig' => [
                 'temperature' => 0.7,
                 'response_mime_type' => 'application/json',
             ]
         ];
+
+        if (!empty($tools)) {
+            $body['tools'] = $tools;
+        }
+
+        return $body;
     }
 }
+

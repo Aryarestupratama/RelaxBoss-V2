@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+// Import Enum yang akan dibuat
+use App\Enums\TodoStatus;
+use App\Enums\TodoPriority;
+use App\Enums\EisenhowerQuadrant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,43 +16,46 @@ class Todo extends Model
     use HasFactory;
 
     /**
-     * Atribut yang dapat diisi secara massal.
+     * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
         'user_id',
         'project_id',
         'parent_task_id',
-        'task',
+        'title',
         'notes',
         'status',
         'priority',
         'eisenhower_quadrant',
         'due_date',
         'completed_at',
-        'pomodoro_custom_duration',
+        'pomodoro_custom_duration', // <-- [DIUBAH] Sesuai dengan database
         'pomodoro_cycles_completed',
     ];
 
     /**
-     * Tipe data asli untuk atribut.
+     * The attributes that should be cast.
+     *
      * @var array
      */
     protected $casts = [
-        // Casts yang sudah ada (benar)
         'due_date' => 'datetime',
         'completed_at' => 'datetime',
-
-        // TAMBAHKAN INI UNTUK MEMASTIKAN TIPE DATA ID & ANGKA
         'user_id' => 'integer',
         'project_id' => 'integer',
         'parent_task_id' => 'integer',
-        'pomodoro_custom_duration' => 'integer',
+        'pomodoro_custom_duration' => 'integer', // <-- [DIUBAH] Sesuai dengan database
         'pomodoro_cycles_completed' => 'integer',
+        
+        'status' => TodoStatus::class,
+        'priority' => TodoPriority::class,
+        'eisenhower_quadrant' => EisenhowerQuadrant::class,
     ];
 
     /**
-     * Relasi ke User yang memiliki tugas.
+     * Get the user that owns the todo.
      */
     public function user(): BelongsTo
     {
@@ -56,7 +63,7 @@ class Todo extends Model
     }
 
     /**
-     * Relasi ke Project (jika ada).
+     * Get the project that the todo belongs to.
      */
     public function project(): BelongsTo
     {
@@ -64,7 +71,7 @@ class Todo extends Model
     }
 
     /**
-     * Relasi ke tugas induk (jika ini adalah sub-tugas).
+     * Get the parent task for this sub-task.
      */
     public function parent(): BelongsTo
     {
@@ -72,7 +79,7 @@ class Todo extends Model
     }
 
     /**
-     * Relasi ke semua sub-tugas dari tugas ini.
+     * Get the sub-tasks for this task.
      */
     public function subtasks(): HasMany
     {
@@ -80,7 +87,7 @@ class Todo extends Model
     }
 
     /**
-     * Relasi ke sesi Pomodoro yang terkait.
+     * Get the pomodoro sessions for the todo.
      */
     public function pomodoroSessions(): HasMany
     {
@@ -88,10 +95,18 @@ class Todo extends Model
     }
 
     /**
-     * Relasi ke file-file yang dilampirkan.
+     * Get the files for the todo.
      */
     public function files(): HasMany
     {
         return $this->hasMany(TaskFile::class);
+    }
+
+    /**
+     * Get the AI consultation messages for the todo.
+     */
+    public function aiConsultationMessages(): HasMany
+    {
+        return $this->hasMany(AiConsultationMessage::class)->orderBy('created_at');
     }
 }
