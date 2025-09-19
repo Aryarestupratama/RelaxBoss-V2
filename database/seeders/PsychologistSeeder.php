@@ -36,12 +36,12 @@ class PsychologistSeeder extends Seeder
         // 2. Buat data psikolog
         $psychologists = [
             [
-                'name' => 'Dr. Anisa',
-                'full_name' => 'Dr. Anisa Rahmawati, M.Psi., Psikolog',
-                'email' => 'anisa.rahmawati@relaxboss.test',
+                'name' => 'psikolog1',
+                'full_name' => 'Psikolog 1, M.Psi., Psikolog',
+                'email' => 'psikolog1@relaxboss.test',
                 'profile' => [
                     'title' => 'M.Psi., Psikolog',
-                    'bio' => 'Anisa adalah seorang psikolog klinis dengan fokus pada Cognitive Behavioral Therapy (CBT). Beliau berpengalaman membantu klien mengatasi stres, kecemasan, dan depresi yang berkaitan dengan tekanan di lingkungan kerja.',
+                    'bio' => 'Psikolog 1 adalah seorang psikolog klinis dengan fokus pada Cognitive Behavioral Therapy (CBT). Beliau berpengalaman membantu klien mengatasi stres, kecemasan, dan depresi yang berkaitan dengan tekanan di lingkungan kerja.',
                     'domicile' => 'Jakarta Selatan',
                     'education' => 'S2 Psikologi Klinis, Universitas Indonesia',
                     'practice_location' => 'Klinik Sehat Jiwa, Jakarta',
@@ -54,12 +54,12 @@ class PsychologistSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'Budi Santoso',
-                'full_name' => 'Budi Santoso, S.Psi., M.Psi.',
-                'email' => 'budi.santoso@relaxboss.test',
+                'name' => 'psikolog2',
+                'full_name' => 'Psikolog 2, S.Psi., M.Psi.',
+                'email' => 'psikolog2@relaxboss.test',
                 'profile' => [
                     'title' => 'M.Psi., Psikolog',
-                    'bio' => 'Dengan pendekatan humanistik, Budi berfokus membantu individu dan pasangan dalam menavigasi konflik hubungan, meningkatkan komunikasi, dan membangun kembali keintiman.',
+                    'bio' => 'Dengan pendekatan humanistik, Psikolog 2 berfokus membantu individu dan pasangan dalam menavigasi konflik hubungan, meningkatkan komunikasi, dan membangun kembali keintiman.',
                     'domicile' => 'Bandung',
                     'education' => 'S2 Psikologi Profesi, Universitas Padjadjaran',
                     'practice_location' => 'Praktik Pribadi, Bandung',
@@ -71,12 +71,12 @@ class PsychologistSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'Citra Lestari',
-                'full_name' => 'Citra Lestari, M.Psi., Psikolog',
-                'email' => 'citra.lestari@relaxboss.test',
+                'name' => 'psikolog3',
+                'full_name' => 'Psikolog 3, M.Psi., Psikolog',
+                'email' => 'psikolog3@relaxboss.test',
                 'profile' => [
                     'title' => 'M.Psi., Psikolog',
-                    'bio' => 'Citra memiliki spesialisasi dalam penanganan trauma menggunakan metode EMDR. Ia berdedikasi untuk membantu klien memproses pengalaman sulit dan menemukan jalan menuju pemulihan.',
+                    'bio' => 'Psikolog 3 memiliki spesialisasi dalam penanganan trauma menggunakan metode EMDR. Ia berdedikasi untuk membantu klien memproses pengalaman sulit dan menemukan jalan menuju pemulihan.',
                     'domicile' => 'Surabaya',
                     'education' => 'S2 Psikologi Klinis, Universitas Airlangga',
                     'practice_location' => 'RS Harapan Kita, Surabaya',
@@ -88,12 +88,12 @@ class PsychologistSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'Dr. David',
-                'full_name' => 'Dr. David Gunawan, M.Psi.',
-                'email' => 'david.gunawan@relaxboss.test',
+                'name' => 'psikolog4',
+                'full_name' => 'Psikolog 4, M.Psi.',
+                'email' => 'psikolog4@relaxboss.test',
                 'profile' => [
                     'title' => 'M.Psi., Psikolog',
-                    'bio' => 'David adalah seorang career coach dan psikolog yang membantu para profesional muda dalam menemukan passion, mengatasi burnout, dan merancang jalur karir yang memuaskan.',
+                    'bio' => 'Psikolog 4 adalah seorang career coach dan psikolog yang membantu para profesional muda dalam menemukan passion, mengatasi burnout, dan merancang jalur karir yang memuaskan.',
                     'domicile' => 'Jakarta Pusat',
                     'education' => 'S2 Psikologi Industri & Organisasi, Universitas Gadjah Mada',
                     'practice_location' => 'Online Consultation',
@@ -105,12 +105,12 @@ class PsychologistSeeder extends Seeder
                 ]
             ],
              [
-                'name' => 'Eka Putri',
-                'full_name' => 'Eka Putri Handayani, M.Psi.',
-                'email' => 'eka.putri@relaxboss.test',
+                'name' => 'psikolog5',
+                'full_name' => 'Psikolog 5, M.Psi.',
+                'email' => 'psikolog5@relaxboss.test',
                 'profile' => [
                     'title' => 'M.Psi., Psikolog',
-                    'bio' => 'Eka berfokus pada kesehatan mental remaja dan dewasa muda. Ia menggunakan pendekatan yang suportif dan dinamis untuk mengatasi isu-isu seperti kecemasan sosial, depresi, dan masalah identitas diri.',
+                    'bio' => 'Psikolog 5 berfokus pada kesehatan mental remaja dan dewasa muda. Ia menggunakan pendekatan yang suportif dan dinamis untuk mengatasi isu-isu seperti kecemasan sosial, depresi, dan masalah identitas diri.',
                     'domicile' => 'Yogyakarta',
                     'education' => 'S2 Psikologi Klinis, Universitas Gadjah Mada',
                     'practice_location' => 'Pusat Konseling Mahasiswa UGM',
@@ -129,7 +129,7 @@ class PsychologistSeeder extends Seeder
                 'name' => $psychologistData['name'],
                 'full_name' => $psychologistData['full_name'],
                 'email' => $psychologistData['email'],
-                'password' => Hash::make('password'), // Password default untuk semua
+                'password' => Hash::make('1234567'), // Password default untuk semua
                 'role' => 'psikolog',
             ]);
 
