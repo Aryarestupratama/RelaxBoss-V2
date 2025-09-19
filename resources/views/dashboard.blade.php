@@ -21,7 +21,7 @@
                                 {{-- Gambar RelaxMate Dinamis --}}
                                 <div class="hidden sm:block w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 flex-shrink-0">
                                     @if($isNight)
-                                        <img src="{{ asset('storage/components/relaxmate-night.png') }}" alt="RelaxMate Night" class="w-full h-full object-contain">
+                                        <img src="{{ asset('build/assets/relaxmate-night.png') }}" alt="RelaxMate Night" class="w-full h-full object-contain">
                                     @else
                                         <img src="{{ asset('build/assets/relaxmate-morning.png') }}" alt="RelaxMate Morning" class="w-full h-full object-contain">
                                     @endif

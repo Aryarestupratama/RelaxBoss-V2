@@ -10,7 +10,7 @@
             <div class="text-center mb-12" data-aos="fade-down">
                 {{-- Gambar RelaxMate Program --}}
                 <div class="mb-6 flex justify-center">
-                    <img src="{{ asset('storage/components/relaxmate-program.png') }}" 
+                    <img src="{{ asset('build/assets/relaxmate-program.png') }}" 
                         alt="RelaxMate Program" 
                         class="max-w-full h-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] object-contain rounded-xl shadow-md">
                 </div>

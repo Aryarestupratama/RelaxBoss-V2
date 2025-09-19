@@ -24,7 +24,7 @@
                 <div class="text-center mb-12" data-aos="fade-down">
                     {{-- Gambar RelaxMate Consultation --}}
                     <div class="mb-6 flex justify-center">
-                        <img src="{{ asset('storage/components/relaxmate-consultation.png') }}" 
+                        <img src="{{ asset('build/assets/relaxmate-consultation.png') }}" 
                             alt="RelaxMate Consultation" 
                             class="max-w-full h-auto w-[90%] sm:w-[70%] md:w-[60%] lg:w-[45%] xl:w-[40%] object-contain drop-shadow-md">
                     </div>

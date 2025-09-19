@@ -19,7 +19,7 @@
                     <div class="text-center">
                         {{-- Gambar RelaxMate --}}
                         <div class="mb-6 flex justify-center">
-                            <img src="{{ asset('storage/components/stress-relaxmate.png') }}" 
+                            <img src="{{ asset('build/assets/stress-relaxmate.png') }}" 
                             alt="RelaxMate sedang stres" 
                             class="w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 object-contain drop-shadow-md">
                         </div>

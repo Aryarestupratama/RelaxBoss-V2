@@ -8,7 +8,7 @@
     <title>Relaxboss - Ketenangan untuk Profesional</title>
 
     {{-- [BARU] Favicon untuk logo di tab browser --}}
-    <link rel="icon" href="{{ asset('storage/components/icon-relaxboss.png') }}">
+    <link rel="icon" src="{{ asset('build/assets/icon-relaxboss.png') }}">
 
     <!-- Aset Tambahan -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">

@@ -30,7 +30,7 @@
                     </div>
                     <div class="w-full md:w-1/2 flex justify-center" data-aos="fade-left" data-aos-delay="100">
                         {{-- BARIS INI YANG DIUBAH --}}
-                        <img src="{{ asset('storage/components/icon-relaxboss.png') }}" alt="Ilustrasi seorang profesional bermeditasi" class="w-full max-w-md lg:max-w-lg"/>
+                        <img src="{{ asset('build/assets/icon-relaxboss.png') }}" alt="Ilustrasi seorang profesional bermeditasi" class="w-full max-w-md lg:max-w-lg"/>
                     </div>
                 </div>
             </div>

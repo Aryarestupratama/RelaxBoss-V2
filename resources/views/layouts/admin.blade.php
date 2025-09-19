@@ -7,6 +7,8 @@
 
     <title>{{ config('app.name', 'Laravel') }} - Admin Panel</title>
 
+    <link rel="icon" src="{{ asset('build/assets/icon-relaxboss.png') }}">
+
     <!-- Scripts and CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

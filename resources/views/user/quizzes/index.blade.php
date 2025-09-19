@@ -22,7 +22,7 @@
                 <div class="text-center mb-12" data-aos="fade-down">
                     {{-- Gambar RelaxMate Assessment --}}
                     <div class="mb-6 flex justify-center">
-                        <img src="{{ asset('storage/components/relaxmate-assesment.png') }}" 
+                        <img src="{{ asset('build/assets/relaxmate-assesment.png') }}" 
                             alt="RelaxMate Assessment" 
                             class="max-w-full h-auto w-[70%] sm:w-[60%] md:w-[50%] lg:w-[35%] xl:w-[30%] object-contain drop-shadow-md">
                     </div>

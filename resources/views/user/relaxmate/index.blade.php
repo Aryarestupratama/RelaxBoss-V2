@@ -61,7 +61,7 @@
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <div class="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden bg-blue-100">
-                            <img src="{{ asset('storage/components/icon-relaxmate.png') }}" alt="RelaxMate" class="w-10 h-10 object-contain">
+                            <img src="{{ asset('build/assets/icon-relaxmate.png') }}" alt="RelaxMate" class="w-10 h-10 object-contain">
                         </div>
                         <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-400 ring-2 ring-white"></span>
                     </div>
@@ -78,7 +78,7 @@
                 <div 
                     x-show="messages.length === 0 && !isLoading" 
                     class="m-auto text-center text-gray-600 px-4">
-                    <img src="{{ asset('storage/components/icon-relaxmate.png') }}" 
+                    <img src="{{ asset('build/assets/icon-relaxmate.png') }}" 
                         alt="RelaxMate Logo" 
                         class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 mx-auto mb-4 object-contain">
                     <h2 class="text-2xl font-bold text-gray-800">Bagaimana saya bisa membantu Anda hari ini?</h2>
@@ -116,7 +116,7 @@
                                 <!-- Avatar AI -->
                                 <div x-show="message.sender_type === 'ai'" 
                                     class="w-8 h-8 bg-blue-100 flex items-center justify-center rounded-full flex-shrink-0 shadow-sm overflow-hidden">
-                                    <img src="{{ asset('storage/components/icon-relaxmate.png') }}" alt="RelaxMate" class="w-6 h-6 object-contain">
+                                    <img src="{{ asset('build/assets/icon-relaxmate.png') }}" alt="RelaxMate" class="w-6 h-6 object-contain">
                                 </div>
 
                                 <div class="flex flex-col max-w-[85%]" 
@@ -143,7 +143,7 @@
                     {{-- Loading Bubble --}}
                     <div x-show="isLoading" class="flex items-start gap-3 justify-start">
                         <div class="w-8 h-8 bg-blue-100 flex items-center justify-center rounded-full flex-shrink-0 shadow-sm overflow-hidden">
-                            <img src="{{ asset('storage/components/icon-relaxmate.png') }}" alt="RelaxMate" class="w-6 h-6 object-contain">
+                            <img src="{{ asset('build/assets/icon-relaxmate.png') }}" alt="RelaxMate" class="w-6 h-6 object-contain">
                         </div>
                         <div class="bg-white p-3 rounded-2xl rounded-bl-none border flex flex-col">
                             <div class="flex items-center gap-2">
